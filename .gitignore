@@ -1,0 +1,5 @@
+# F# Files
+*.fsproj
+.ionide
+bin/
+obj/
