@@ -45,3 +45,6 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+
+# IDE foler
+.vscode/
