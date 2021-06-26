@@ -1,0 +1,18 @@
+setup
+    > install gdb via MinGW install manager
+    > cd to target folder
+    > compile in g++ with "-g" flag
+
+running
+    > run "gdb" in console
+    > run "target exec <.exe name>"
+    > type "run" or "r"
+
+    or
+    > run "gdb <.exe name>"
+    > then "run" or "r"
+
+breakpoints
+    > set with "break <line or function>" or "b"
+    > "run", then "next" or "n"
+    > "continue" or "c" after looking through
