@@ -1,0 +1,2 @@
+dotnet new console -lang "F#" -o <dir/project name> // create new F# project
+dotnet run <script> // run F# script
