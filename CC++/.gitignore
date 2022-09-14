@@ -1,0 +1,17 @@
+*.exe
+*.out
+*.app
+*.lai
+*.la
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.slo
+*.lo
+*.o
+*.obj
+*.log
+
+.vscode/

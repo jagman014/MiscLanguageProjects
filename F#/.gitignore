@@ -1,0 +1,7 @@
+*.fsproj
+.ionide
+bin/
+obj/
+.fake
+
+.vscode/
