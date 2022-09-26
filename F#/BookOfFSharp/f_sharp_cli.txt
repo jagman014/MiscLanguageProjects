@@ -1,2 +1,5 @@
 dotnet new console -lang "F#" -o <dir/project name> // create new F# project
 dotnet run <script> // run F# script
+
+# or using C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools\fsc.exe
+fsc <file>
