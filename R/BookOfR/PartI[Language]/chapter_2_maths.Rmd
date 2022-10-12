@@ -1,0 +1,622 @@
+---
+title: "Chapter 2 Numerics, Arithmetic, Assignment, and Vectors"
+output: html_notebook
+---
+
+# 2.1 Basic Maths
+
+## 2.1.1 Arithmetic
+
+BIDMAS is important, use brackets to distinguish
+
+```{r}
+2 + 3
+14 / 6
+14 / 6 + 5
+14 / (6 + 5)
+3 ^ 2
+2 ^ 3
+```
+
+Can find square root of any non-negative number
+
+```{r}
+sqrt(x=9)
+sqrt(x=5.311)
+```
+
+## 2.1.2 Logs and Exponents
+
+Both x and the base must be positive
+
+```{r}
+log(x=243, base=3)
+```
+
+Base e exponent and log base e by default
+
+```{r}
+exp(x=3)
+```
+
+```{r}
+log(x=20.08554)
+```
+
+## 2.1.3 E-Notation
+
+Large and very small numbers will use E-notation instead of x10\^x
+
+```{r}
+2342151012900
+0.0000002533
+```
+
+## 2.1 Exercises
+
+### (a) Verify $\frac {6a + 42} {3^{4.2-3.62}} = 29.50556$ when $a=2.3$
+
+```{r}
+a <- 2.3
+((6 * a) + 42) / (3 ^ (4.2 - 3.62))
+```
+
+### (b) Which of the following squares $-4$ and adds $2$?
+
+#### (i) (-4) \^ 2 + 2 (ii) -4 \^ 2 + 2 (iii) (-4) \^( 2 + 2) (iv) -4 \^( 2 + 2)
+
+```{r}
+(-4) ^ 2 + 2
+```
+
+### (c) What is the square root of the average of the numbers: $25.2, 15, 16.44, 15.3,18.6$ ?
+
+```{r}
+sqrt((mean(c(25.2, 15, 16.44, 15.3, 18.6))) / 2)
+```
+
+### (d) Find $\log_e 0.3$
+
+```{r}
+log(0.3)
+```
+
+### (e) Compute the exponential of (d)
+
+```{r}
+exp(-1.203973)
+```
+
+### (f) What is R's representation of $-0.00000000423546322$?
+
+```{r}
+-0.00000000423546322
+```
+
+# 2.2 Assigning Objects
+
+Can assign objects using `=` or `<-`
+
+```{r}
+x <- -5
+x
+x = x + 1
+x
+```
+
+```{r}
+my_number = 45.2
+y <- my_number * x
+y
+```
+
+```{r}
+ls()
+```
+
+## 2.2 Exercises
+
+### (a) Create an object that stores $3^{2} \times 4^{\frac {1} {8}}$
+
+```{r}
+a <- (3 ^ 2) * (4 ^ (1 / 8))
+print(a)
+```
+
+### (b) Overwrite (a) by dividing it by $2.33$
+
+```{r}
+a <- a / 2.33
+print(a)
+```
+
+### (c) Create a new object with the value $-8.2 \times 10^{-13}$
+
+```{r}
+c <- -8.2e-13
+print(c)
+```
+
+### (d) Print (c) times (b)
+
+```{r}
+d <- a * c
+print(d)
+```
+
+# 2.3 Vectors
+
+## 2.3.1 Creating Vectors
+
+Create vectors using the `c()` function
+
+```{r}
+my_vec <- c(1, 3, 1, 42)
+my_vec
+```
+
+Can have calculated values within the construction of the vector
+
+```{r}
+foo <- 32.1
+my_vec_2 <- c(3, -3, 2, 3.45, 1e+03, 64 ^ 0.5, 2 + (3 - 1.1) / 9.44, foo)
+my_vec_2
+```
+
+Can make vectors from other objects
+
+```{r}
+my_vec_3 = c(my_vec, my_vec_2)
+my_vec_3
+```
+
+## 2.3.2 Sequences, Repetition, Sorting, and Lengths
+
+Create sequences with the `:` operator
+
+```{r}
+3:27
+```
+
+Can use calculated values as well
+
+```{r}
+foo <- 5.3
+bar <- foo:(-47 + 1.5)
+bar
+```
+
+### Sequences with `seq`
+
+Can also create sequences with `seq()`
+
+```{r}
+seq(from=3, to=27, by=3)
+```
+
+Can define the separation with `by` keyword, or the length of the sequence with `length.out`
+
+```{r}
+seq(from=3, to=27, length.out=40)
+```
+
+Can use calculated fields and negatives for decreasing sequences
+
+```{r}
+foo <- 5.3
+my_seq <- seq(from=foo, to=(-47 + 1.5), by=-2.4)
+my_seq
+```
+
+### Repetition with `rep`
+
+Repeat values multiple `times` over
+
+```{r}
+rep(x=1, times=4)
+```
+
+```{r}
+rep(x=c(3, 62, 8.3), times=3)
+```
+
+Repeat `each` element of a vector
+
+```{r}
+rep(x=c(3, 62, 8.3), each=2)
+```
+
+`each` occurs first then `times`
+
+```{r}
+rep(x=c(3, 62, 8.3), times=3, each=2)
+```
+
+Can combine all of the above into a single vector
+
+```{r}
+foo <- 4 
+c(3, 8.3, rep(x=32, times=foo), seq(from=-2, to=1, length.out=(foo + 1)))
+```
+
+### Sorting with `sort`
+
+Sort values into ascending order
+
+```{r}
+sort(x=c(2.5, -1, -10.3, 3.44), decreasing=FALSE)
+```
+
+Or descending order
+
+```{r}
+sort(x=c(2.5, -1, -10.3, 3.44), decreasing=TRUE)
+```
+
+```{r}
+foo <- seq(from=4.3, to=5.5, length.out=8)
+foo
+```
+
+```{r}
+bar <- sort(x=foo, decreasing=TRUE)
+bar
+```
+
+```{r}
+sort(x=c(foo, bar), decreasing=FALSE)
+```
+
+### Finding Vector Length with `length`
+
+Finds the number of entries in a vector
+
+```{r}
+length(x=c(3, 2, 8, 1))
+```
+
+```{r}
+length(x=5:13)
+```
+
+```{r}
+foo <- 4
+bar <- c(3, 8.3, 
+         rep(x=32, times=foo), 
+         seq(from=-2, to=1, length.out=foo+1))
+length(x=bar)
+```
+
+## 2.3 Exercises
+
+### (a) Store values from $5$ to $-11$ in steps of $0.3$
+
+```{r}
+a <- seq(from=5, to=-11, by=-0.3)
+print(a)
+```
+
+### (b) Overwrite (a) with the same sequence in revered order
+
+```{r}
+a <- sort(a, decreasing=FALSE)
+print(a)
+```
+
+### (c) Repeat the vector `c(-1, 3, -5, 7, -9)` twice, with each element repeated 10 times. Display the result in descending order.
+
+```{r}
+c <- rep(c(-1.3, -5.7, -9), times=2, each=10)
+print(sort(c, decreasing=TRUE))
+```
+
+### (d) Create and store a vector that contains the following:
+
+#### (i) Sequence of integers from $6$ to $12$
+
+```{r}
+d_i <- 6:12
+d_i
+```
+
+#### (ii) Threefold repetition of $5.3$
+
+```{r}
+d_ii <- rep(5.3, times=3)
+d_ii
+```
+
+#### (iii) The number $-3$
+
+```{r}
+d_iii <- -3
+d_iii
+```
+
+#### (iv) A sequence of nine values from $102$ and ending at the length of (c)
+
+```{r}
+d_iv <- seq(from=102, to=length(c), length.out=9)
+d_iv
+```
+
+```{r}
+d <- c(d_i, d_ii, d_iii, d_iv)
+print(d)
+```
+
+### (e) Confirm the length of (d) is $20$
+
+```{r}
+print(length(d))
+```
+
+## 2.3.2 Sub-setting and Element Extraction
+
+Can index vectors with `[]`
+
+```{r}
+my_vec <- c(5, -2.3, 4, 4, 4, 6, 8, 10, 40221, -8)
+length(x=my_vec)
+```
+
+R is 1 indexed
+
+```{r}
+my_vec[1]
+```
+
+```{r}
+foo <- my_vec[2]
+foo
+```
+
+Going from 1 - N inclusive
+
+```{r}
+my_vec[length(x=my_vec)]
+```
+
+```{r}
+my_vec.len <- length(x=my_vec)
+bar <- my_vec[my_vec.len - 1]
+bar
+```
+
+All possible indices
+
+```{r}
+1:my_vec.len
+```
+
+Delete elements using negative indices, doesn't overwrite original object
+
+```{r}
+my_vec[-1]
+```
+
+```{r}
+baz <- my_vec[-2]
+baz
+```
+
+```{r}
+qux <- my_vec[-(my_vec.len - 1)]
+qux
+```
+
+Can piece it back together from `bar` and `qux`
+
+```{r}
+c(qux[-length(x=qux)], bar, qux[length(x=qux)])
+```
+
+Can subset vectors with other vectors
+
+```{r}
+my_vec[c(1, 3, 5)]
+```
+
+```{r}
+foo <- my_vec[1:4]
+foo
+```
+
+Order of indices matters for the returned values
+
+```{r}
+foo[length(foo):2]
+```
+
+Can use any amount of indices as long as they are within the range `1:length(v)`
+
+```{r}
+indexes <- c(4, rep(x=2, times=3), 1, 1, 2, 3:1)
+indexes
+```
+
+```{r}
+foo[indexes]
+```
+
+Can also be used to remove multiple values
+
+```{r}
+foo[-c(1, 3)]
+```
+
+Not possible to mix positive and negative indices
+
+Can overwrite values with indexing
+
+```{r}
+bar <- c(3, 2, 4, 4, 1, 2, 4, 1, 0, 0, 5)
+bar
+```
+
+```{r}
+bar[1] <- 6
+bar
+```
+
+```{r}
+bar[c(2, 4, 6)] <- c(-2, -0.5, -1)
+bar
+```
+
+```{r}
+bar[7:10] <- 100
+bar
+```
+
+## 2.4 Exercises
+
+### (a) Create a vector that stores:
+
+-   A sequence of length $5$ from $3$ to $6$
+
+-   A twofold repetition of the vector `c(2, -5.1, -33)`
+
+-   The value $\frac {7} {42} + 2$
+
+```{r}
+a <- c(seq(from=3, to=6, length.out=5), 
+       rep(c(2, -5.1, -33), times=2), (7 / 12) + 2)
+print(a)
+```
+
+### (b) Extract the first and last elements from (a)
+
+```{r}
+b <- c(a[1], a[length(a)])
+print(b)
+```
+
+### (c) Store everything from (a) except the first and last element
+
+```{r}
+c <- a[c(-1, -length(a))]
+print(c)
+```
+
+### (d) Use (b) and (c) to reconstruct (a)
+
+```{r}
+d <- c(b[1], c, b[length(b)])
+print(d)
+```
+
+### (e) Overwrite (a) with the same values in ascending order
+
+```{r}
+a <- sort(a, decreasing=FALSE)
+print(a)
+```
+
+### (f) Use `:` to reverse the order of (e)
+
+```{r}
+f <- a[length(a):1]  # reverses the sorted vector
+print(f)
+```
+
+### (g) Create a vector from (c) that repeats the third element of (c) three times, the sixth four times, and the last once
+
+```{r}
+g <- c(rep(c[3], times=3), rep(c[6], times=4), c[length(c)])
+print(g)
+```
+
+### (h) Create a copy of (e), overwrite the first, fifth to the seventh, and last elements with the values 99 to 95.
+
+```{r}
+h <- a
+h[c(1, 5:7, length(h))] <- 99:95
+print(h)
+```
+
+## 2.3.4 Vector-Oriented Behaviour
+
+Element-wise operations
+
+```{r}
+foo <- 5.5:0.5
+foo
+```
+
+```{r}
+foo - c(2, 4, 6, 8, 10, 12)
+```
+
+Smaller vectors are repeated to the size of the larger
+
+```{r}
+bar <- c(1, -1)
+foo * bar
+```
+
+Non-multiples will produce a warning, but will partially repeat the smaller
+
+```{r}
+baz <- c(1, -1, 0.5, -0.5)
+foo * baz
+```
+
+Scalars will also do element wise operations
+
+```{r}
+qux <- 3
+foo + qux
+```
+
+Can use aggregate functions on vectors
+
+```{r}
+sum(foo)
+```
+
+```{r}
+prod(foo)
+```
+
+The repetitions also works with assignment
+
+```{r}
+foo[c(1, 3, 5, 6)] <- c(-99, 99)
+foo
+```
+
+## 2.5 Exercises
+
+### (a) Convert the vector `c( 2,0.5,1,2,0.5,1,2,0.5,1)` to only 1s, using a vector of length 3
+
+```{r}
+a <- c(2, 0.5, 1, 2, 0.5, 1, 2, 0.5, 1)
+print(a)
+a <- a / c(2, 0.5, 1)
+print(a)
+```
+
+### (b) $^{\circ}C = \frac {5}{9} (^{\circ}F - 32)$ Use vectors to convert $(45, 77, 20, 19, 101, 120, 212)$ from Fahrenheit to Celsius
+
+```{r}
+F <- c(45, 77, 20, 19, 101, 120, 212)
+C <- (5 / 9) * (F - 32)
+print(C)
+```
+
+### (c) Use the vector `c(2, 4, 6)` and `c(1, 2)` with `rep` and `*` to produce `c(2, 4, 6, 4, 8, 12)`
+
+```{r}
+c_1 <- c(2, 4, 6)
+c_2 <- c(1,2)
+c_3 <- rep(c_1, times=2) * rep(c_2, each=3)
+print(c_3)
+```
+
+### (d) Overwrite the middle four elements of (c) with the two values of $-0.1$ and $-100$
+
+```{r}
+c_3[2:(length(c_3) - 1)] <- c(-0.1, 100)
+print(c_3)
+```

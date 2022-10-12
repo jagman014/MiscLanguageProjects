@@ -1,0 +1,347 @@
+---
+title: "Chapter 9 Calling Functions"
+output: html_notebook
+---
+
+# 9.1 Scoping
+
+## 9.1.1 Environments
+
+### Global Environment
+
+All objects created in current session, can view global objects with `ls()`
+
+```{r}
+foo <- 4 + 5
+bar <- "stringtastic"
+ls()
+```
+
+### Package Environments and Namespace
+
+Items made available via packages and `library()`
+
+```{r}
+ls("package:graphics")
+```
+
+### Local Environments
+
+Objects passed to functions as parameters / arguments, i.e. `data` vector:
+
+```{r}
+youthspeak <- matrix(
+                    data=c("OMG", "LOL", "WTF", "YOLO"), 
+                    nrow=2, 
+                    ncol=2
+                    )
+youthspeak
+```
+
+## 9.1.2 Search Path
+
+Can view the R search path with `search()`
+
+```{r}
+search()
+```
+
+R will search the path from `.GlobalEnv` to `package:base` to find an object
+
+Can use `environment()` to find where the object is located
+
+```{r}
+environment(seq)
+```
+
+```{r}
+environment(arrows)
+```
+
+Loading a library with insert the package in the search path
+
+```{r}
+library("car")
+```
+
+```{r}
+search()
+```
+
+An error will occur when an object is not found
+
+```{r}
+neither.here()
+```
+
+```{r}
+nor.there
+```
+
+## 9.1.3 Reserved and Protected Names
+
+Some words are reserved and forbidden to be used as an object name
+
+-   `if` and `else`
+
+-   `for`, `while`, and `in`
+
+-   `function`
+
+-   `repeat`, `break`, and `next`
+
+-   `TRUE` and `FALSE`
+
+-   `Inf` and `-Inf`
+
+-   `NA`, `NaN`, and `NULL`
+
+Doing so will result in an error, using a case variant will cause confusion
+
+```{r}
+NaN <- 5
+```
+
+`TRUE` and `FALSE` are reserved, but the shorthands aren't, be careful
+
+```{r}
+T <- 42
+F <- TRUE
+F&&TRUE
+```
+
+Can use `rm()` to remove items from the global environment
+
+```{r}
+ls()
+```
+
+```{r}
+rm(list=ls())
+ls()
+```
+
+## 9.1 Exercises
+
+### (a) Identify the first $20$ items contained in the built-in and automatically loaded `methods` package. How many are there in total?
+
+```{r}
+ls("package:methods")[1:20]
+```
+
+```{r}
+length(ls("package:methods"))
+```
+
+### (b) Determine the environment that owns the following:
+
+#### (i) `read.table`
+
+```{r}
+environment(read.table)
+```
+
+#### (ii) `data`
+
+```{r}
+environment(data)
+```
+
+#### (iii) `matrix`
+
+```{r}
+environment(matrix)
+```
+
+#### (iv) `jpeg`
+
+```{r}
+environment(jpeg)
+```
+
+### (c) Use `ls()` and a test for character string equality to confirm the function `smoothScatter` is part of the `graphics` package
+
+```{r}
+any("smoothScatter" == ls("package:graphics"))
+```
+
+# 9.2 Argument Matching
+
+Many ways to use function arguments
+
+## 9.2.1 Exact
+
+Match function argument name exactly, order of arguments doesn't matter
+
+```{r}
+bar <- matrix(
+            data=1:9,
+            nrow=3,
+            ncol=3,
+            dimnames=list(c("A", "B", "C"), c("D", "E", "F"))
+            )
+bar
+```
+
+```{r}
+bar <- matrix(
+            nrow=3,
+            dimnames=list(c("A", "B", "C"), c("D", "E", "F")),  
+            ncol=3,
+            data=1:9,            
+            )
+bar
+```
+
+## 9.2.2 Partial
+
+Match part of the argument name, shorter code
+
+```{r}
+bar <- matrix(
+            nr=3, 
+            di=list(c("A", "B", "C"), c("D", "E", "F")),
+            nc=3,
+            dat=1:9
+            )
+bar
+```
+
+Cannot shorten fully, due to how argument matching works. Have to be distinct -\> harder to remember than just the exact argument
+
+```{r}
+bar <- matrix(
+            nr=3,
+            di=list(c("A", "B", "C"), c("D", "E", "F")),
+            nc=3,
+            d=1:9
+            )
+```
+
+## 9.2.3 Positional
+
+Most compact mode, uses positional matching. Arguments need to be in the correct order.
+
+Can find arguments of a function using `args()`
+
+```{r}
+args(matrix)
+```
+
+```{r}
+bar <- matrix(
+            1:9, 3, 3, F, 
+            list(c("A", "B", "C"), c("D", "E", "F"))
+            )
+bar
+```
+
+Need to reference all of the arguments prior to use later ones
+
+```{r}
+bar <- matrix(1:9, 3, 3, list(c("A", "B", "C"), c("D", "E", "F")))
+```
+
+## 9.2.4 Mixed
+
+Perfectly valid to mix types of argument matching
+
+```{r}
+bar <- matrix(
+            1:9, 3, 3,
+            dim=list(c("A", "B", "C"), c("D", "E", "F"))
+            )
+bar
+```
+
+## 9.2.5 Dot-Dot-Dot: Use of Ellipses
+
+`…` used to specify a flexible number of unspecified arguments
+
+```{r}
+args(data.frame)
+```
+
+or for supplementary arguments:
+
+```{r}
+args(plot)
+```
+
+## 9.2 Exercises
+
+### (a) Use positional matching with `seq` to create a sequence of values between $-4$ an $4$ in steps of $0.2$
+
+```{r}
+seq(-4, 4, 0.2)
+```
+
+### (b) Identify which style of argument matching is used in the following:
+
+#### (i) `array(8:1, dim=c(2, 2, 2))`
+
+```{r}
+args(array)
+```
+
+Positional and exact matching
+
+#### (ii) `rep(1:2, 3)`
+
+```{r}
+args(rep)
+```
+
+Positional
+
+#### (iii) `seq(from=10, to=8, length=5)`
+
+```{r}
+args(seq)
+```
+
+Exact and partial (`length.out`)
+
+#### (iv) `sort(descreasing=T, x=c(2, 1, 1, 2, 0.3, 3, 1.3))`
+
+```{r}
+args(sort)
+```
+
+Exact
+
+#### (v) `which(matrix(c(T, F, T, T), 2, 2))`
+
+```{r}
+args(matrix)
+```
+
+```{r}
+args(which)
+```
+
+Positional
+
+#### (vi) `which(matrix(c(T, F, T, T), 2, 2), a=T)`
+
+Positional and partial (`arr.ind`)
+
+### (c) Use the function documentation for `plot.default()` to determine which of the following fall under the ellipsis
+
+-   [ ]  `type`
+
+-   [x] `pch`
+
+-   [ ] `xlab`
+
+-   [ ] `ylab`
+
+-   [x] `lwd`
+
+-   [x] `lty`
+
+-   [x] `col`
+
+```{r}
+args(plot.default)
+```

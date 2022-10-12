@@ -1,0 +1,483 @@
+---
+title: "Chapter 5 Lists and Data Frames"
+output: html_notebook
+---
+
+# 5.1 Lists of Objects
+
+## 5.1.1 Definition and Component Access
+
+`list()` can store any objects
+
+```{r}
+foo <- list(
+            matrix(
+                    data=1:4,
+                    nrow=2,
+                    ncol=2
+                    ),
+            c(T, F, T, T),
+            "hello"
+            )
+foo
+```
+
+```{r}
+length(x=foo)
+```
+
+Access element with `[[]]`
+
+```{r}
+foo[[1]]
+```
+
+```{r}
+foo[[3]]
+```
+
+Can then access list elements like other objects
+
+```{r}
+foo[[1]] + 5.5
+```
+
+```{r}
+foo[[1]][1, 2]
+```
+
+```{r}
+foo[[1]][2,]
+```
+
+```{r}
+cat(foo[[3]], "you!")
+```
+
+Can reassign elements like other objects
+
+```{r}
+foo[[3]]
+```
+
+```{r}
+foo[[3]] <- paste(foo[[3]], "you!")
+foo
+```
+
+Can access multiple elements as expected
+
+```{r}
+foo[[c(2, 3)]] # returns third element of second member
+```
+
+Instead need to use `[]` slicing
+
+```{r}
+bar <- foo[c(2, 3)]
+bar
+```
+
+## 5.1.2 Naming
+
+Can name elements of a list with `name()` function
+
+```{r}
+names(foo) <- c("my_matrix", "my_logicals", "my_string")
+foo
+```
+
+Can now access list members using `$(member_name)`
+
+```{r}
+foo$my_matrix
+```
+
+Subsetting works just like before
+
+```{r}
+all(foo$my_matrix[, 2] == foo[[1]][, 2])
+```
+
+Can name members when list is being created
+
+```{r}
+baz <- list(
+            tom=c(foo[[2]], T, T, T, F),
+            dick="g'day mate",
+            harry=foo$my_matrix * 2
+            )
+baz
+```
+
+## 5.1.3 Nesting
+
+Can nest lists within lists, and assign new named members
+
+```{r}
+baz$bobby <- foo
+baz
+```
+
+Can then access nested lists with another `$` or `[[]]`
+
+```{r}
+baz$bobby$my_logicals[1:3]
+```
+
+```{r}
+baz[[4]][[2]][1:3]
+```
+
+Or even a mix
+
+```{r}
+baz[[4]]$my_logicals[1:3]
+```
+
+## 5.1 Exercises
+
+### (a) Create a list that contains:
+
+-   A sequence of $20$ evenly spaced numbers from $-4$ to $4$
+
+-   A $3 \times 3$ matrix of the logical vector `c(F, T, T, T, F, T, T, F, F)` , column-wise filled
+
+-   A char vector with the strings `"don"` and `"quixote"`
+
+-   A factor containing `c("LOW", "MED", "LOW", "MED", "MED", "HIGH")`
+
+```{r}
+A <- list(
+        seq(-4, 4, length.out=20),
+        matrix(c(F, T, T, T, F, T, T, F, F), nrow=3, ncol=3),
+        c('don', 'quixote'),
+        factor(c('LOW', 'MED', 'LOW', 'MED', 'MED', 'HIGH'))
+        )
+```
+
+#### (i) Extract elements $2$ and $1$ of columns $2$ and $3$ of the logical matrix
+
+```{r}
+A[[2]][2:1, 2:3]
+```
+
+#### (ii) Use `sub` to overwrite `"quixote"` with `"Quixote"` and `"don"` with `"Don"`. Then output to the window:
+
+    "Windmills! ATTACK!"
+        -\Don Quixote/-
+
+```{r}
+A[[3]][1] <- sub(pattern='d', replacement='D', A[[3]][1])
+A[[3]][2] <- sub(pattern='q', replacement='Q', A[[3]][2])
+
+cat(
+    '"Windmills! ATTACK"\n\t-\\', 
+    A[[3]][1], 
+    ' ', 
+    A[[3]][2], 
+    '/-', 
+    sep=''
+    )
+```
+
+#### (iii) Obtain all values from the sequence between $-4$ and $4$ that are greater than $1$
+
+```{r}
+A[[1]][A[[1]] > 1]
+```
+
+#### (iv) Using `which`, determine which indexes in the factor are assigned to `"MED"`
+
+```{r}
+which(A[[4]] == 'MED')
+```
+
+### (b) Create a new list with:
+
+-   The factor from (a) as a component named `"facs"`
+
+-   The numeric vector `c(3, 2.1, 3.3, 4, 1.5, 4.9)` named `"nums"`
+
+-   A nested list made of the first three members of (a) named `"oldlist"`
+
+```{r}
+B <- list(
+        facs=A[[4]],
+        nums=c(3, 2.1, 3.3, 4, 1.5, 4.9),
+        oldlist=A[1:3]
+        )
+```
+
+#### (i) Extract the elements of `"facs"` that correspond to elements of `"nums"` greater than or equal to $3$ 
+
+```{r}
+B$facs[B$nums >= 3]
+```
+
+#### (ii) Add a new member called `"flags"`, a logical vector of length 6, from a twofold repetition of the third column from the matrix in `"oldlist"`
+
+```{r}
+B$flags <- rep(B$oldlist[[2]][, 3], times=2)
+```
+
+#### (iii) Use `"flags"` and logical negation to extract entries of `"nums"` corresponding to `FALSE`
+
+```{r}
+B$nums[!B$flags]
+```
+
+#### (iv) Overwrite the char string in `"oldlist"` with the single string of `"Don Quixote"`
+
+```{r}
+B$oldlist[[3]] <- 'Don Quixote'
+```
+
+# 5.2 Data Frames
+
+## 5.2.1 Construction
+
+Use `data.frame()`, to create tabular data
+
+```{r}
+my_data <- data.frame(
+                    person=c(
+                            "Peter", 
+                            "Lois", 
+                            "Meg", 
+                            "Chris", 
+                            "Stewie"
+                            ),
+                    age=c(42, 40, 17, 14, 1),
+                    sex=factor(c("M", "F", "F", "M", "M"))
+                    )
+my_data
+```
+
+Extract data like matrices
+
+```{r}
+my_data[2, 2]
+```
+
+```{r}
+my_data[3:5, 3]
+```
+
+```{r}
+my_data[, c(3, 1)]
+```
+
+Can access elements with member selection as well
+
+```{r}
+my_data$age
+```
+
+```{r}
+my_data$age[2]
+```
+
+Can get dimensions using `nrow(), ncol(), dim()`
+
+```{r}
+nrow(my_data)
+```
+
+```{r}
+ncol(my_data)
+```
+
+```{r}
+dim(my_data)
+```
+
+Character vectors used to be defaulted to factors
+
+```{r}
+my_data$person
+```
+
+Would need to turn of with `stringsAsFactors=FALSE`
+
+```{r}
+my_data <- data.frame(
+                    person=c(
+                            "Peter", 
+                            "Lois", 
+                            "Meg", 
+                            "Chris", 
+                            "Stewie"
+                            ),
+                    age=c(42, 40, 17, 14, 1),
+                    sex=factor(c("M", "F", "F", "M", "M")),
+                    stringsAsFactors=FALSE
+                    )
+my_data
+```
+
+```{r}
+my_data$person
+```
+
+## 5.2.2 Adding Data Columns and Combining Data Frames
+
+Can add new records with `rbind()` , column names and types need to match to properly be added
+
+```{r}
+new_record <- data.frame(
+                        person="Brian", 
+                        age=7, 
+                        sex=factor("M", levels=levels(my_data$sex))
+                        )
+new_record
+```
+
+```{r}
+my_data <- rbind(my_data, new_record)
+my_data
+```
+
+Can add columns using `cbind()`
+
+```{r}
+funny <- c("High", "High", "Low", "Med", "High", "Med")
+funny <- factor(x=funny, levels=c("Low", "Med", "High"))
+funny
+```
+
+```{r}
+my_data <- cbind(my_data, funny)
+my_data
+```
+
+Can also use member assignment for columns
+
+```{r}
+my_data$age.mon <- my_data$age * 12
+my_data
+```
+
+## 5.2.3 Logical Record Subsets
+
+Can use logical vectors to subset data frames
+
+```{r}
+my_data$sex == "M"
+```
+
+```{r}
+my_data[my_data$sex == "M", ]
+```
+
+Can also omit values with negative indices
+
+```{r}
+my_data[my_data$sex == "M", -3]
+```
+
+Or can use string vectors to select columns
+
+```{r}
+my_data[my_data$sex == "M", c("person", "age", "funny", "age.mon")]
+```
+
+```{r}
+my_data[my_data$age > 10 | my_data$funny == "High", ]
+```
+
+Can return a zero row subset, if no criteria is met
+
+```{r}
+my_data[my_data$age > 45, ]
+```
+
+## 5.2 Exercises
+
+### (a) Create and store the data frame `dframe`:
+
+    person      sex     funny
+    Stan        M       High
+    Francine    F       Med
+    Steve       M       Low
+    Roger       M       High
+    Hayley      F       Med
+    Klaus       M       Med
+
+with the same format as `my_data` from $\S 5.2$
+
+```{r}
+dframe <- data.frame(
+                    person=c(
+                            'Stan', 
+                            'Francine', 
+                            'Steve', 
+                            'Roger', 
+                            'Hayley', 
+                            'Klaus'
+                            ),
+                    sex=factor(
+                            c(
+                            'M', 
+                            'F', 
+                            'M', 
+                            'M', 
+                            'F', 
+                            'M'
+                            )
+                            ),
+                    funny=factor(
+                                c(
+                                'High', 
+                                'Med', 
+                                'Low', 
+                                'High', 
+                                'Med', 
+                                'Med'
+                                ),
+                                levels=c('Low', 'Med', 'High'),
+                                ordered=TRUE
+                                )
+                    )
+```
+
+### (b) Stan and Francine are $41$, Steve is $15$, Hayley is $21$, and Klaus is $60$. Roger is $1,600$ years old. Add this new column
+
+```{r}
+dframe$age <- c(41, 41, 15, 1600, 21, 60)
+```
+
+### (c) Reorder the columns of `dframe` to be the same as `my_data`
+
+```{r}
+dframe <- dframe[c(1, 4, 2, 3)]
+```
+
+### (d) Create a new version of `my_data` fro $\S 5.2.2$ called `my_data2` by deleting the `age.mon` column
+
+```{r}
+my_data2 <- my_data[, -5]
+```
+
+### (e) Combine `my_data2` and `dframe` into one object called `my_data_frame`
+
+```{r}
+my_data_frame <- rbind(dframe, my_data2)
+```
+
+### (f) Write a single line of code, to extract just the names and ages of any records where the person is female and has a funniness equal to `Med` OR `High`
+
+```{r}
+my_data_frame[
+            (my_data_frame$sex == 'F') & 
+            (my_data_frame$funny != 'Low'), 
+            1:2
+            ]
+```
+
+### (g) Extract all records for those whose name starts with *S*
+
+```{r}
+my_data_frame[
+    substr(my_data_frame$person, start=1, stop=1) == 'S', ]
+```

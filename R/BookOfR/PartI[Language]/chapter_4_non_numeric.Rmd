@@ -1,0 +1,1144 @@
+---
+title: "Chapter 4 Non-Numeric Values"
+output: html_notebook
+---
+
+# 4.1 Logical Values
+
+Logical values -\> Boolean -\> `TRUE` or `FASLE`
+
+## 4.1.1 `TRUE` or `FALSE`?
+
+Can assign logical values like numerics
+
+```{r}
+foo <- TRUE
+foo
+```
+
+Can use `F` or `T` instead
+
+```{r}
+bar <- F
+bar
+```
+
+Can also fill arrays
+
+```{r}
+baz <- c(T, F, F, F, T, F, T, T, T, F, T, F)
+baz
+```
+
+```{r}
+length(x=baz)
+```
+
+```{r}
+qux <- matrix(data=baz, nrow=3, ncol=4, byrow=foo)
+qux
+```
+
+## 4.1.2 A Logical Outcome: Relational Operators
+
+Typical relational operators:
+
+-   `==`
+
+-   `!=`
+
+-   `>`
+
+-   `<`
+
+-   `>=`
+
+-   `<=`
+
+```{r}
+1 == 2
+```
+
+```{r}
+1 > 2
+```
+
+```{r}
+(2 - 1) <= 2
+```
+
+```{r}
+1 != (2 + 3)
+```
+
+Can be used with arrays as well
+
+```{r}
+foo <- c(3, 2, 1, 4, 1, 2, 1, -1, 0, 3)
+bar <- c(4, 1, 2, 1, 1, 0, 0, 3, 0, 4)
+length(x=foo) == length(x=bar)
+```
+
+Relational operators work element by element
+
+```{r}
+foo == bar
+```
+
+```{r}
+foo < bar
+```
+
+```{r}
+foo <= bar
+```
+
+```{r}
+foo <= (bar + 10)
+```
+
+Vector recycling also applies
+
+```{r}
+baz <- foo[c(10, 3)]
+baz
+```
+
+```{r}
+foo > baz
+```
+
+```{r}
+foo < 3
+```
+
+```{r}
+foo.mat <- matrix(foo, nrow=5, ncol=2)
+foo.mat
+```
+
+```{r}
+bar.mat <- matrix(bar, nrow=5, ncol=2)
+bar.mat
+```
+
+```{r}
+foo.mat <= bar.mat
+```
+
+```{r}
+foo.mat < 3
+```
+
+Can use `all()` to return if all of a vector is `TRUE` on not, `any()` to return if any are `TRUE`
+
+```{r}
+qux <- foo == bar
+qux
+```
+
+```{r}
+any(qux)
+```
+
+```{r}
+all(qux)
+```
+
+```{r}
+quux <- foo <= (bar + 10)
+quux
+```
+
+```{r}
+any(quux)
+```
+
+```{r}
+all(quux)
+```
+
+## 4.1 Exercises
+
+### (a) Store `c(6, 9, 7, 3, 6, 7, 9, 6, 3, 6, 6, 7, 1, 9, 1)`, then identify:
+
+```{r}
+A <- c(6, 9, 7, 3, 6, 7, 9, 6, 3, 6, 6, 7, 1, 9, 1)
+```
+
+`which` returns the indices that are `TRUE`
+
+#### (i) Those equal to $6$
+
+```{r}
+which(A == 6)
+```
+
+#### (ii) Those greater than or equal to $6$
+
+```{r}
+which(A >= 6)
+```
+
+#### (iii) Those less than $6 + 2$
+
+```{r}
+which(A < (6 + 2))
+```
+
+#### (iv) Those not equal to $6$
+
+```{r}
+which(A != 6)
+```
+
+### (b) Create a new vector from (a) by deleting the first three elements. Fill a $2 \times 2 \times 3$ array. Then identify:
+
+```{r}
+B <- array(data=A[-1:-3], dim=c(2, 2, 3))
+```
+
+#### (i) Those less than or equal to $6$ divided by $2$, plus $4$
+
+```{r}
+B[B <= ((6 / 2) + 4)]
+```
+
+#### (ii) Those less than or equal to $6$ divided by $2$, plus $4$, after increasing every element by $2$
+
+```{r}
+B[B + 2 <= ((6 / 2) + 4)]
+```
+
+### (c) Check the specific locations of elements equal to 0 in $I_{10}$
+
+```{r}
+diag(10) == 0
+```
+
+### (d) Check whether any of the values of the logical arrays created in (b) are `TRUE`, if they are check if they are all `TRUE`
+
+```{r}
+print(any(B <= ((6 / 2) + 4)))
+print(all(B <= ((6 / 2) + 4)))
+
+print(any(B + 2 <= ((6 / 2) + 4)))
+print(all(B + 2 <= ((6 / 2) + 4)))
+```
+
+### (e) By extracting the diagonal elements of the logical matrix in (c), use `any()` to check there are no `TRUE` entries
+
+```{r}
+any(diag(diag(10) == 0))
+```
+
+## 4.1.3 Multiple Comparisons: Logical Operators
+
+Can compare element-wise or as a single comparison:
+
+-   `&` element-wise
+
+-   `&&` single
+
+-   `|` element-wise
+
+-   `||` single
+
+-   `!`
+
+Single comparitiors on scalars
+
+```{r}
+FALSE || ((T && TRUE) || FALSE)
+```
+
+```{r}
+!TRUE && TRUE
+```
+
+```{r}
+(T && (TRUE || F)) && FALSE
+```
+
+```{r}
+(6 < 4) || (3 != 1)
+```
+
+Element-wise on arrays
+
+```{r}
+foo <- c(T, F, F, F, T, F, T, T, T, F, T, F)
+foo
+```
+
+```{r}
+bar <- c(F, T, F, T, F, F, F, F, T, T, T, T)
+bar
+```
+
+```{r}
+foo & bar
+```
+
+```{r}
+foo | bar
+```
+
+Single comparators on arrays, only the first elements
+
+```{r}
+foo && bar
+```
+
+```{r}
+foo || bar
+```
+
+## 4.2 Exercises
+
+### (a) Store `c(7, 1, 7, 10, 5, 9, 10, 3, 10, 8)`. Identify elements greater than $5$ OR equal to $2$
+
+```{r}
+A <- c(7, 1, 7, 10, 5, 9, 10, 3, 10, 8)
+which((A > 5) | (A == 2))
+```
+
+### (b) Store `c(8, 8, 4, 4, 5, 1, 5, 6, 6, 8)`. Identify elements less than or equal to $6$ AND not equal to $4$
+
+```{r}
+B <- c(8, 8, 4, 4, 5, 1, 5, 6, 6, 8)
+which((B <= 6) & (B != 4))
+```
+
+### (c) Identify the elements that satisfy (a) AND (b)
+
+```{r}
+C_1 <- (A > 5) | (A == 2)
+C_2 <- (B <= 6) & (B != 4)
+C_1 & C_2
+```
+
+### (d) Store a third vector equal to the element-wise sum of (a) and (b), then determine:
+
+```{r}
+D <- A + B
+```
+
+#### (i) The elements greater than or equal to $14$ but not equal to $15$
+
+```{r}
+which((D >= 14) & (D != 15))
+```
+
+#### (ii) The elements of the element-wise division of (d) by (a) that are greater than or equal to $4$ OR less than or equal to $2$
+
+```{r}
+which(((D / A) > 4) | ((D / A) <= 2))
+```
+
+### (e) Confirm using the long version in all of the above, only performs the first comparison
+
+```{r}
+print(((A > 5) || (A == 2)) == 
+          ((A[1] > 5) || (A[1] == 2)))
+
+print(((B <= 6) && (B != 4)) ==
+          ((B[1] <= 6) && (B[1] != 4)))
+
+print((C_1 && C_2) ==
+          (C_1[1] && C_2[1]))
+
+print(((D >= 14) && (D != 15)) ==
+          ((D[1] >= 14) && (D[1] != 15)))
+
+print((((D / A) > 4) || ((D / A) <= 2)) ==
+          (((D[1] / A[1]) > 4) || ((D[1] / A[1]) <= 2)))
+
+```
+
+## 4.1.4 Logicals Are Numbers
+
+`TRUE` = $1$
+
+`FALSE` = $0$
+
+```{r}
+TRUE + TRUE
+```
+
+```{r}
+FALSE - TRUE
+```
+
+```{r}
+T + T + F + T + F + F + T
+```
+
+Can interchange with numerical values
+
+```{r}
+1 && 1
+```
+
+```{r}
+1 || 0
+```
+
+```{r}
+0 && 1
+```
+
+## 4.1.5 Logical Sub-setting and Extraction
+
+Can use logical values to subset a vector
+
+```{r}
+my_vec <- c(5, -2.3, 4, 4, 4, 6, 8, 10, 40221, -8)
+my_vec[c( F, T, F, F, F, F, F, F, F, T)]
+```
+
+Can use conditionals within the subset
+
+```{r}
+my_vec < 0
+```
+
+```{r}
+my_vec[my_vec < 0]
+```
+
+Vector recycling also applies
+
+```{r}
+my_vec[c(T, F)]
+```
+
+```{r}
+my_vec[(my_vec > 0) & (my_vec < 1000)]
+```
+
+Can be used to assign elements
+
+```{r}
+my_vec[my_vec < 0] <- -200
+my_vec
+```
+
+Can use which to return `TRUE` indices
+
+```{r}
+which(x=c(T, F, F, T, T))
+```
+
+```{r}
+which(x=(my_vec < 0))
+```
+
+Can then use to slice vector
+
+```{r}
+my_vec[-which(x=(my_vec < 0))]
+```
+
+Can use them to also slice arrays
+
+```{r}
+A <- matrix(
+        c(0.3, 4.5, 55.3, 91, 0.1, 105.5, -4.2, 8.2, 27.9), 
+        nrow=3, 
+        ncol=3
+        )
+A
+```
+
+```{r}
+A[c(T, F, F), c(F, T, T)]
+```
+
+```{r}
+A < 1
+```
+
+```{r}
+A[A < 1] <- -7
+A
+```
+
+```{r}
+A > 25
+```
+
+`which` defaults to treating arrays like vectors
+
+```{r}
+which(x=(A > 25))
+```
+
+```{r}
+which(x=(A > 25), arr.ind=T)
+```
+
+## 4.3 Exercises
+
+### (a) Store `c(7, 5, 6, 1, 2, 10, 8, 3, 8, 2)`, then do:
+
+```{r}
+A <- c(7, 5, 6, 1, 2, 10, 8, 3, 8, 2)
+```
+
+#### (i) Extract elements greater than or equal to $5$, store it.
+
+```{r}
+A_1 <- A[A >= 5]
+A_1
+```
+
+#### (ii) Display elements that remain after removing all elements greater than or equal to $5$
+
+```{r}
+A[-which(A >= 5)]
+```
+
+### (b) Use (a)(i) to make a $2 \times 3$ matrix, filled row-wise. Then:
+
+```{r}
+B <- matrix(A_1, nrow=2, ncol=3, byrow=TRUE)
+```
+
+#### (i) Replace any elements that are equal to 8, with the square of the element at $(1, 2)$ of (b)
+
+```{r}
+B[B == 8] <- B[1, 2] ^ 2
+B
+```
+
+#### (ii) Confirm that all values of (b) are less than or equal to $25$ AND greater than $4$
+
+```{r}
+all((B <= 25) & (B > 4))
+```
+
+### (c) Create a $3 \times 2 \times 3$ array, using the following vector: `c( 10, 5, 1, 4, 7, 4, 3, 3, 1, 3, 4, 3, 1, 7, 8, 3, 7, 3)`. Then:
+
+```{r}
+C <- array(
+        c(10, 5, 1, 4, 7, 4, 3, 3, 1, 3, 4, 3, 1, 7, 8, 5, 3, 7, 3),
+        dim=c(3, 2, 3)
+        )
+```
+
+#### (i) Identify the dimension-specific index positions of elements that are either $3$ OR $4$
+
+```{r}
+which((C == 3) | (C == 4), arr.ind=TRUE)
+```
+
+#### (ii) Replace all elements in (c) that are less than $3$ OR greater than or equal to $7$ with $100$
+
+```{r}
+C[(C < 3) | (C >= 7)] <- 100
+C
+```
+
+### (d) Using (a), and the vector `c(F, T)` tot extract every second value. Can you do the same with the vector `c(1,0)`, why / why not?
+
+```{r}
+print(A[c(FALSE, TRUE)])
+print(A[c(0, 1)])
+# can't use 0/1 for FALSE/TRUE for indexing
+```
+
+# 4.2 Characters
+
+## 4.2.1 Creating a String
+
+Strings created between a set of quotes `""` or `''`
+
+```{r}
+foo <- "This is a character string!"
+foo
+```
+
+R counts a string as a single entity
+
+```{r}
+length(x=foo)
+```
+
+Find string length using `nchar()`
+
+```{r}
+nchar(x=foo)
+```
+
+Can have any combination of chars in a string
+
+```{r}
+bar <- "23.3"
+bar
+```
+
+Strings have no numeric meaning
+
+```{r}
+bar * 2
+```
+
+Can compare strings
+
+```{r}
+"alpha" == "alpha"
+```
+
+```{r}
+"alpha" != "beta"
+```
+
+```{r}
+c("alpha", "beta", "gamma") == "beta"
+```
+
+Letters later in the alphabet are greater than those near the start
+
+```{r}
+"alpha" <= "beta"
+```
+
+```{r}
+"gamma" > "Alpha"
+```
+
+Uppercase letters are greater than lowercase
+
+```{r}
+"Alpha" > "alpha"
+```
+
+```{r}
+"beta" >= "bEtA"
+```
+
+Most symbols are valid chars
+
+```{r}
+baz <- "&4 _ 3 **%.? $ymbolic non$en$e ,; "
+baz
+```
+
+## 4.2.2 Concatenation
+
+Use `cat()` to concatenate and print strings
+
+```{r}
+qux <- c("awsome", "R", "is")
+length(x=qux)
+```
+
+```{r}
+qux
+```
+
+```{r}
+cat(qux[2], qux[3], "totally", qux[1], "!")
+```
+
+Use `paste()` to return a concatenated string
+
+```{r}
+paste(qux[2], qux[3], "totally", qux[1], "!")
+```
+
+Both have an optional keyword `sep` for specifying the separator
+
+```{r}
+paste(qux[2], qux[3], "totally", qux[1], "!", sep="---")
+```
+
+```{r}
+paste(qux[2], qux[3], "totally", qux[1], "!", sep="")
+```
+
+```{r}
+cat("Do you think ", qux[2], " ", qux[3], " ", qux[1], "?", sep="")
+```
+
+R will convert most types to strings
+
+```{r}
+a <- 3
+b <- 4.4
+cat("The value stored as 'a' is ", a, ".", sep="")
+```
+
+```{r}
+paste("The value stored as 'b' is ", b, ".", sep="")
+```
+
+```{r}
+cat("The result of a + b is ", a, " + ", b, " = ", a + b, sep="")
+```
+
+```{r}
+paste(
+    "Is ", a + b, " less than 10? That's totally ", 
+    (a + b) < 10, ".", sep=""
+    )
+```
+
+## 4.2.3 Escape Sequences
+
+Standard escape characters:
+
+-   \\n -\> newline
+
+-   \\t -\> tab
+
+-   \\b -\> backspace
+
+-   \\\\ -\> backslash
+
+-   \\" -\> double quote
+
+```{r}
+cat("here is a string\nsplit\tto neww\b \n\n\tlines")
+```
+
+```{r}
+cat("I really want a backslash: \\\nand a double quote\"")
+```
+
+## 4.2.4 Substrings and Matching
+
+Use `substr()` to get parts of a string
+
+```{r}
+foo <-"This is a character string!"
+foo
+```
+
+```{r}
+substr(x=foo, start=21, stop=27)
+```
+
+Can be used to reassign parts of strings
+
+```{r}
+substr(x=foo, start=1, stop=4) <- "Here"
+foo
+```
+
+Can use `sub()` to replace a pattern or `gsub()` to replace all matches
+
+```{r}
+bar <- "How much wood could a woodchuck chuck"
+sub(pattern="chuck", replacement="hurl", x=bar)
+```
+
+```{r}
+gsub(pattern="chuck", replacement="hurl", x=bar)
+```
+
+## 4.4 Exercises
+
+### (a) Recreate the following:
+
+    "The quick brown fox
+        jumped over
+            the lazy dogs"
+
+```{r}
+cat('"The quick brown fox\n\tjumped over\n\t\tthe lazy dogs"')
+```
+
+### (b) Store `num1 <- 4` and `num2 <- 0.75`. Recreate:
+
+    [1] "The result of multiplying 4 by 0.75 is 3"
+
+```{r}
+num1 <- 4
+num2 <- 0.75
+
+paste('The result of multiplying ', num1, ' by ', num2, ' is ', num1 * num2)
+```
+
+### (c) Replace \${user} in working directory with your initial and surname
+
+```{r}
+directory <- getwd()
+sub(pattern='jagma', replacement='gallen', directory)
+```
+
+### (d) Store `"How much wood could a woodchuck chuck"`. Then:
+
+```{r}
+bar <- "How much wood could a woodchuck chuck"
+bar
+```
+
+#### (i) Store a new string of (d) plus `"if a woodchuck could chuck wood"`
+
+```{r}
+baz <- paste(bar, "if a woodchuck could chuck wood")
+baz
+```
+
+#### (ii) From (i) replace all instance of `wood` with `metal`
+
+```{r}
+gsub(pattern='wood', replacement='metal', baz)
+```
+
+### (e) Store `"Two 6-packs for $12.99"`. Then:
+
+```{r}
+E <- "Two 6-packs for £12.99"
+E
+```
+
+#### (i) Use a check for equality to confirm the substring from $5$ to $10$ is `"6-pack"`
+
+```{r}
+substr(E, start=5, stop='10') == '6-pack'
+```
+
+#### (ii) Make it a better deal, by changing the price to $\$10.99$
+
+```{r}
+E <- sub(pattern='12', replacement='10', E)
+E
+```
+
+# 4.3 Factors
+
+Useful for categorical data
+
+## 4.3.1 Identifying Categories
+
+Data:
+
+| Person   | Sex    | Month of Birth |
+|----------|--------|----------------|
+| Liz      | Female | April          |
+| Jolene   | Female | January        |
+| Susan    | Female | December       |
+| Boris    | Male   | September      |
+| Rochelle | Female | November       |
+| Tim      | Male   | July           |
+| Simon    | Male   | July           |
+| Amy      | Female | June           |
+
+Save names as a vector
+
+```{r}
+first_name <- c(
+                "Liz", "Jolene", "Susan", "Boris", "Rochelle",
+                "Tim", "Simon", "Amy"
+                )
+```
+
+Sex is categorical, limited number of options
+
+```{r}
+sex.num <- c(0, 0, 0, 1, 0, 1, 1, 0)
+sex.char <- c(
+                "female", "female", "female", "male", "female", 
+                "male", "male", "female"
+                )
+```
+
+Use `factor()` to convert vector to a factor
+
+```{r}
+sex.num.fac <- factor(x=sex.num)
+sex.num.fac
+```
+
+```{r}
+sex.char.fac <- factor(x=sex.char)
+sex.char.fac
+```
+
+Use `levels()` to obtain factor level information
+
+```{r}
+levels(x=sex.num.fac)
+```
+
+```{r}
+levels(x=sex.char.fac)
+```
+
+Can relabel factor levels
+
+```{r}
+levels(x=sex.num.fac) <- c("1", "2")
+sex.num.fac
+```
+
+Subset like other vectors
+
+```{r}
+sex.char.fac[2:5]
+```
+
+```{r}
+sex.char.fac[c(1:3, 5, 8)]
+```
+
+Need to use a string to use logical comparators
+
+```{r}
+sex.num.fac == "2"
+```
+
+Can use corresponding vector positions for subsetting
+
+```{r}
+first_name[sex.char.fac == "male"]
+```
+
+## 4.3.2 Defining and Ordering Levels
+
+Use month of birth
+
+```{r}
+mob <- c("Apr", "Jan", "Dec", "Sep", "Nov", "Jul", "Jul", "Jun")
+```
+
+Unordered currently
+
+```{r}
+mob[2]
+```
+
+```{r}
+mob[3]
+```
+
+```{r}
+mob[2] < mob[3]
+```
+
+Create an ordered factor with `ordered` keyword, with explicit `levels`
+
+```{r}
+ms <- c(
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        )
+mob.fac <- factor(x=mob, levels=ms, ordered=TRUE)
+mob.fac
+```
+
+Now have meaningful comparisons
+
+```{r}
+mob.fac[2] < mob.fac[3]
+```
+
+## 4.3.3 Combining and Cutting
+
+Simple vectors
+
+```{r}
+foo <- c(5.1, 3.3, 3.1, 4)
+bar <- c(4.5, 1.2)
+c(foo, bar)
+```
+
+`c()` on factors
+
+```{r}
+new.values <- factor(
+                    x=c("Oct", "Feb", "Feb"),
+                    levels=levels(mob.fac),
+                    ordered=TRUE
+                     )
+new.values
+```
+
+*Used to return just a numeric vector*
+
+```{r}
+c(mob.fac, new.values)
+```
+
+*Old method for combining*
+
+```{r}
+mob.new <- levels(mob.fac)[c(mob.fac, new.values)]
+mob.new.fac <- factor(x=mob.new, levels=levels(mob.fac), ordered=TRUE)
+mob.new.fac
+```
+
+Can `cut()` vectors to produce intervals
+
+```{r}
+Y <- c(0.53, 5.4, 1.5, 3.33, 0.45, 0.01, 2, 4.2, 1.99, 1.01)
+br <- c(0, 2, 4, 6)
+cut(x=Y, breaks=br)
+```
+
+Can reverse the interval boundaries using the `right` keyword
+
+```{r}
+cut(x=Y, breaks=br, right=F)
+```
+
+Can include lowest or highest value with `include.lowest` depending on `right`
+
+```{r}
+cut(x=Y, breaks=br, right=F, include.lowest=T)
+```
+
+Can also change the `levels` of this with `labels`
+
+```{r}
+lab <- c("Small", "Medium", "Large")
+cut(x=Y, breaks=br, right=F, includ.lowest=T, labels=lab)
+```
+
+## 4.5 Exercises
+
+### New Zealand Government
+
+-   Parties
+
+    -   National
+
+    -   Labour
+
+    -   Greens
+
+    -   Māori
+
+    -   Other
+
+Ask 20 New Zealanders about political persuasion
+
+-   12 Males, 8 Females
+
+    -   Numbers 1, 5-7, 12, and 14-16 being female
+
+-   Individuals
+
+    -   1, 4, 12, 15, 16, and 19 Labour
+
+    -   No Māori
+
+    -   6, 9, and 11 Greens
+
+    -   10, and 20 Other
+
+    -   Rest National
+
+### (a) Create Sex and Party vectors
+
+```{r}
+sex <- 1:20
+sex[c(1, 5:7, 12, 14:16)] <- 'F'
+sex[c(2:4, 8:11, 13, 17:20)] <- 'M'
+sex
+```
+
+```{r}
+party <- 1:20
+party[c(1, 4, 12, 15, 16, 19)] <- 'Labour'
+party[c(6, 9, 11)] <- 'Greens'
+party[c(10, 20)] <- 'Other'
+party[c(2, 3, 5, 7, 8, 13, 14, 17, 18)] <- 'National'
+party
+```
+
+### (b) Create factors from (a)
+
+```{r}
+sexes <- c('M', 'F')
+sex.fac <- factor(sex, levels=sexes)
+sex.fac
+```
+
+```{r}
+parties <- c('Labour', 'Greens', 'National', 'Maori', 'Other')
+party.fac <- factor(party, levels=parties)
+party.fac
+```
+
+### (c) Use (b) and subsetting to:
+
+#### (i) Return parties for only males
+
+```{r}
+party.fac[sex.fac == 'M']
+```
+
+#### (ii) Return genders of National party
+
+```{r}
+sex.fac[party.fac == 'National']
+```
+
+### (d) Another six people:
+
+-   `c("National", "Maori", "Maori", "Labour", "Greens", "Labour")`
+
+-   `c("M", "M", "F", "F", "F", "M")`
+
+```{r}
+party.new <- c(
+                'National', 'Maori', 'Maori', 
+                'Labour', 'Greens', 'Labour'
+               )
+party.new.fac <- factor(c(party, party.new), 
+                        levels=levels(party.fac))
+party.new.fac
+```
+
+```{r}
+sex.new <- c('M', 'M', 'F', 'F', 'F', 'M')
+
+sex.new.fac <- factor(c(sex, sex.new), 
+                        levels=levels(sex.fac))
+sex.new.fac
+```
+
+### Ask individuals about election confidence percentage:
+
+Results:
+
+$93, 55, 29, 100, 52, 84, 56, 0, 33, 52, 35, 53, 55,$
+
+$46, 40, 40, 56, 45, 64, 31, 10, 29, 40, 95, 18, 61$
+
+### (e) Create factor with following levels:
+
+-   Low: $[0, 30]$
+
+-   Moderate: $(30, 70]$
+
+-   High: $(70, 100]$
+
+```{r}
+percentages <- c(
+                93, 55, 29, 100, 52, 84, 56, 0, 33, 52, 35, 53, 55,
+                46, 40, 40, 56, 45, 64, 31, 10, 29, 40, 95, 18, 61
+                )
+
+cuts <- c(0, 30, 70, 100)
+labs <- c('Low', 'Moderate', 'High')
+
+confidence <- cut(percentages, breaks=cuts, include.lowest=TRUE, labels=labs)
+confidence
+```
+
+### (f) From (e) extract levels corresponding to Labour and National
+
+```{r}
+confidence.labour <- confidence[party.new.fac == 'Labour']
+confidence.labour
+```
+
+```{r}
+confidence.national <- confidence[party.new.fac == 'National']
+confidence.national
+```

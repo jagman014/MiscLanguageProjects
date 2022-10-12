@@ -1,0 +1,387 @@
+---
+title: "Chapter 8 Reading and Writing Files"
+output: html_notebook
+---
+
+# 8.1 R-Ready Data Sets
+
+## 8.1.1 Built-in Data Sets
+
+`datasets` library gives a set of built-in datasets available in base-r
+
+Can get a summary of the data sets with:
+
+```{r}
+library(help="datasets")
+```
+
+Can access like any other data frame variable
+
+```{r}
+ChickWeight[1:15, ]
+```
+
+## 8.1.2 Contributed Data Sets
+
+Many other data set libraries available, i.e. `tseries` package, first:
+
+`install.packages("tseries")`
+
+```{r}
+library("tseries")
+```
+
+First have to load data into workspace, then can access
+
+```{r}
+data(ice.river)
+ice.river[1:5, ]
+```
+
+# 8.2 Reading in External Data Files
+
+## 8.2.1 The Table Format
+
+File created in a tabular format, called *`mydatafile.txt`*
+
+Can then load file in using `read.table()`
+
+```{r}
+my_data_file <- read.table(
+                            file='./data/mydatafile.txt',
+                            header=TRUE,
+                            sep=" ",
+                            na.strings="*",
+                            stringsAsFactors=FALSE
+                        )
+my_data_file
+```
+
+`file` keyword will use linux style file paths, can use `list.files()` like `ls`
+
+```{r}
+list.files("./data")
+```
+
+`file.choose()` will open a file explorer, and return the correctly formatted file path string
+
+```{r}
+file.choose()
+```
+
+Can then pass to `read.table()`, and work with the data
+
+```{r}
+my_data_file$sex <- as.factor(my_data_file$sex)
+my_data_file$funny <- factor(
+                            x=my_data_file$funny, 
+                            levels=c("Low", "Med", "High")
+                            )
+```
+
+## 8.2.2 Spreadsheet Workbooks
+
+Created spreadsheet in *`spreadsheetfile.xlsx`* then saved to *`shreadsheetfile.csv`*
+
+Then use `read.csv()` to load data in
+
+```{r}
+spread <- read.csv(
+                file='./data/spreadsheetfile.csv', 
+                header=FALSE, 
+                stringsAsFactors=TRUE
+                )
+spread
+```
+
+## 8.2.3 Web-Based Files
+
+Can read in data from URLs with `read.table()`
+
+```{r}
+dia.url <- "https://www.amstat.org/publications/jse/v9n2/4Cdata.txt"
+diamonds <- read.table(dia.url)
+```
+
+```{r}
+names(diamonds) <- c("Carat", "Colour", "Clarity", "Cert", "Price")
+diamonds[1:5, ]
+```
+
+## 8.2.4 Other File Formats
+
+R can work with many other file types, and third party packages can make this even easier
+
+# 8.3 Writing Out Data Files and Plots
+
+## 8.3.1 Data Sets
+
+Write data to file using `write.table()`
+
+```{r}
+write.table(
+            x=my_data_file,
+            file="./output/somenewfile.txt",
+            sep="@",
+            na="??",
+            quote=FALSE,
+            row.names=FALSE
+            )
+```
+
+`write.csv()` is also available, `file.choose()` is not usually used here
+
+## 8.3.2 Plots and Graphics Files
+
+Create *.jpeg* files using the `jpeg()` object graphics device
+
+```{r}
+jpeg(
+    filename="./output/myjpegplot.jpeg",
+    width=600,
+    height=600
+    )
+plot(
+    1:5, 6:10, 
+    ylab="a nice ylab", 
+    xlab="here's an xlab", 
+    main="a saved .jpeg plot"
+    )
+points(1:5, 10:6, cex=2, pch=4, col=2)
+dev.off()
+```
+
+Need to call `dev.off()` to finish plot and write file
+
+Create *.pdf* with `pdf()` objects
+
+```{r}
+pdf(file="./output/mypdfplot.pdf", width=5, height=5)
+plot(
+    1:5, 6:10,
+    ylab="a nice ylab",
+    xlab="here's an xlab",
+    main="a saved .pdf plot"
+    )
+points(1:5, 10:6, cex=2, pch=4, col=2)
+dev.off()
+```
+
+Can use `ggplot2` plots `ggsave()` function
+
+```{r fig.height=8, fig.width=8}
+library("ggplot2")
+
+foo <- c(1.1, 2, 3.5, 3.9, 4.2)
+bar <- c(2, 2.2, -1.3, 0, 0.2)
+
+(
+qplot(foo, bar, geom='blank')
++ geom_point(size=3, shape=8, color="darkgreen")
++ geom_line(color="orange", linetype=4)
+)
+```
+
+```{r}
+ggsave(filename='./output/mypngplot.png')
+```
+
+# 8.4 Ad-Hoc Object Read/Write Operations
+
+Can read/write R-objects to files
+
+```{r}
+somelist <- list(
+                foo=c(5, 2, 45),
+                bar=matrix(
+                            data=c(T, T, F, F, F, F, T, F, T), 
+                            nrow=3, 
+                            ncol=3
+                            ),
+                baz=factor(
+                            c(1, 2, 2, 3, 1, 1, 3),
+                            levels=1:3,
+                            ordered=TRUE
+                        )
+                )
+somelist
+```
+
+Use of `dput()` to write R-objects
+
+```{r}
+dput(x=somelist, file='./output/myRobject.txt')
+```
+
+Then use `dget()` to retrieve object from file
+
+```{r}
+new_object <- dget(file='./output/myRobject.txt')
+new_object
+```
+
+## 8.1 Exercises
+
+### (a) Using the built-in data set `quakes`:
+
+#### (i) Select only the records where the `mag` is greater than or equal to 5, then write it to a table-format file called *`q5.txt`*, using a delimiter of `!` and now row names
+
+```{r}
+q5 <- quakes[quakes$mag >= 5, ]
+write.table(
+            q5, 
+            './output/q5.txt', 
+            sep='!', 
+            quote=FALSE, 
+            row.names=FALSE
+            )
+```
+
+#### (ii) Read the file back into an object called `q5.dframe`
+
+```{r}
+q5.dframe <- read.table(
+                        './output/q5.txt', 
+                        header=TRUE, 
+                        sep='!', 
+                        stringsAsFactors=FALSE
+                        )
+q5.dframe
+```
+
+### (b) In the `car` package, use the data frame called `Duncan`. Then:
+
+#### (i) Plot `education` on the x-axis and `income` on the y-axis, with fixed limits of $[0, 100]$, with appropriate labels. For jobs with a `prestige` less than or equal to $80$ use a black $\circ$, for greater than $80$  use a blue $\bullet$  
+
+```{r fig.height=8, fig.width=8}
+library(car)
+
+x <- Duncan$education
+y <- Duncan$income
+
+plot(
+    x, y, 
+    type='n', 
+    xlim=c(0, 100), 
+    ylim=c(0, 100), 
+    xlab='Percentage of people with a high school education', 
+    ylab='Percentage of people with income >$3.5k / yr', 
+    main='Education vs Income for Jobs in 1950'
+    )
+
+points(
+        x[Duncan$prestige <= 80], 
+        y[Duncan$prestige <= 80], 
+        col='black', 
+        pch=1
+        )
+points(
+        x[Duncan$prestige > 80], 
+        y[Duncan$prestige > 80], 
+        col='blue', 
+        pch=20
+        )
+```
+
+#### (ii) Add a legend explaining the differences, then save a \$500 \\times 500\$ pixel .png file
+
+```{r}
+png('./output/8_1_b.png', width=500, height=500)
+
+plot(
+    x, y, 
+    type='n', 
+    xlim=c(0, 100), 
+    ylim=c(0, 100), 
+    xlab='Percentage of people with a high school education', 
+    ylab='Percentage of people with income >$3.5k / yr', 
+    main='Education vs Income for Jobs in 1950'
+    )
+
+points(
+        x[Duncan$prestige <= 80], 
+        y[Duncan$prestige <= 80], 
+        col='black', 
+        pch=1
+        )
+points(
+        x[Duncan$prestige > 80], 
+        y[Duncan$prestige > 80], 
+        col='blue', 
+        pch=20
+        )
+
+legend(
+    'topleft',
+    legend=c('Job prestige \u2264 80%', 'Job prestige > 80%'),
+    pch=c(1, 20),
+    col=c('black', 'blue'),
+    pt.cex=c(2, 2)
+)
+
+dev.off()
+```
+
+### (c) Create a list called `exer` that contains the three data sets `quakes`, `q5.dframe`, and `Duncan` Then:
+
+```{r}
+exer <- list(quakes=quakes, q5.dframe=q5.dframe, Duncan=Duncan)
+```
+
+#### (i) Write the list to disk, called *`Exercise8-1.txt`*
+
+```{r}
+dput(exer, './output/Exercise8-1.txt')
+```
+
+#### (ii) Read *`Exercise8-1.txt`*, call the result `list.of.dataframes`
+
+```{r}
+list.of.dataframes <- dget('./output/Exercise8-1.txt')
+names(list.of.dataframes)
+```
+
+### (d) Use `ggsave()` to save a copy of the figure from $\S 7.4.3$ as a *.tiff* file
+
+```{r fig.height=8, width=8}
+x <- 1:20
+y <- c(
+        -1.49, 3.37, 2.59, -2.78, -3.94, 
+        -0.92, 6.43, 8.51, 3.41, -5.23, 
+        -12.01, -6.58, 2.87, 14.12, 9.63, 
+        -4.58, -14.75, -11.67, 1.17, 15.62
+        )
+
+ptype <- rep(NA, length(x))
+ptype[y >= 5] <- 'too_big'
+ptype[y <= -5] <-'too_small'
+ptype[(x >= 5 & x <= 15) & (y > -5 & y < 5)] <- 'sweet'
+ptype[(x < 5 | x > 15) & (y > -5 & y < 5)] <- 'standard'
+ptype <- factor(ptype)
+
+(
+qplot(x, y, color=ptype, shape=ptype) 
++ geom_point(size=4) 
++ geom_line(mapping=aes(group=1), color='black', lty=2) 
++ geom_hline(mapping=aes(yintercept=c(-5, 5)), color='red')
++ geom_segment(
+                mapping=aes(x=5, y=-5, xend=5, yend=5), 
+                color='red', 
+                lty=3
+                ) 
++ geom_segment(
+                mapping=aes(x=15, y=-5, xend=15, yend=5), 
+                color='red', 
+                lty=3
+                )
+)
+```
+
+```{r}
+ggsave(
+        filename='./output/Section7-4-3.tiff', 
+        width=180, 
+        height=150, 
+        units='mm'
+        )
+```

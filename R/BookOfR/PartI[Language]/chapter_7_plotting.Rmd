@@ -1,0 +1,435 @@
+---
+title: "Chapter 7 Basic Plotting"
+output: html_notebook
+---
+
+# 7.1 Using `plot` with Coordinate Vectors
+
+Basic plotting with `plot()` and two vectors
+
+```{r fig.height=8, fig.width=8}
+foo <- c(1.1, 2, 3.5, 3.9, 4.2)
+bar <- c(2, 2.2, -1.3, 0, 0.2)
+plot(foo, bar)
+```
+
+Can just use a matrix with `plot()`
+
+```{r}
+baz <- cbind(foo, bar)
+baz
+```
+
+```{r fig.height=8, fig.width=8}
+plot(baz)
+```
+
+# 7.2 Graphical Parameters
+
+Many keywords for `plot()` :
+
++------------------------+-----------------------------------------------+
+| Keyword                | Effect                                        |
++========================+===============================================+
+| `type`                 | How points should be plotted                  |
++------------------------+-----------------------------------------------+
+| `main`, `xlab`, `ylab` | Change title, x, and y labels                 |
++------------------------+-----------------------------------------------+
+| `col`                  | Change colours                                |
++------------------------+-----------------------------------------------+
+| `pch`                  | Change point character                        |
++------------------------+-----------------------------------------------+
+| `cex`                  | Change character size                         |
++------------------------+-----------------------------------------------+
+| `lty`                  | Change line type                              |
++------------------------+-----------------------------------------------+
+| `lwd`                  | Change line width                             |
++------------------------+-----------------------------------------------+
+| `xlim`, `ylim`         | Change x and y plotting limits                |
++------------------------+-----------------------------------------------+
+
+## 7.2.1 Automatic Plot Types
+
+Defaults to individual points.
+
+Change to line plot: `type="l"`
+
+```{r fig.height=8, fig.width=8}
+plot(foo, bar, type="l")
+```
+
+Change to line and dots: `type="b"`
+
+```{r fig.height=8, fig.width=8}
+plot(foo, bar, type="b")
+```
+
+## 7.2.2 Title and Axis Labels
+
+```{r fig.height=8, fig.width=8}
+plot(
+    foo, bar, 
+    type="b", 
+    main="My lovely plot", 
+    xlab="x axis label",
+    ylab="location y"
+    )
+```
+
+```{r fig.height=8, fig.width=8}
+plot(
+    foo, bar,
+    type="b",
+    main="My lovely plot\ntitle on two lines",
+    xlab="",
+    ylab=""
+    )
+```
+
+## 7.2.3 Colour
+
+Can change colour with `col=` either an integer or a colour string
+
+```{r fig.height=8, fig.width=8}
+plot(
+    1:8, 1:8, 
+    col=1:8,
+    cex=5,
+    pch=20,
+    xlab="",
+    ylab=""
+    )
+```
+
+## 7.2.4 Line and Point Appearances
+
+Can change point character and line types with `pch=` and `lty=`
+
+```{r fig.height=8, fig.width=8}
+plot(
+    1:25, 1:25,
+    pch=1:25,
+    cex=2,
+    xlab="",
+    ylab=""
+    )
+```
+
+```{r fig.height=8, fig.width=8}
+plot(c(1, 1), c(0, 1), 
+     lty=1, type="l", xlim=c(1, 6), xlab="", ylab="")
+lines(c(2, 2), c(0, 1), lty=2, type="l")
+lines(c(3, 3), c(0, 1), lty=3, type="l")
+lines(c(4, 4), c(0, 1), lty=4, type="l")
+lines(c(5, 5), c(0, 1), lty=5, type="l")
+lines(c(6, 6), c(0, 1), lty=6, type="l")
+```
+
+## 7.2.5 Plotting Region Limits
+
+Change the plotting region with `xlim=` and `ylim=`
+
+```{r fig.height=8, fig.width=8}
+plot(
+    foo, bar,
+    type='b',
+    main="My lovely plot",
+    xlab="",
+    ylab="",
+    col=4,
+    pch=8,
+    lty=2,
+    cex=2.3,
+    lwd=3.3,
+    xlim=c(-10, 5),
+    ylim=c(-3, 3)
+    )
+```
+
+# 7.3 Adding Points, Lines, and Text to an Existing Plot
+
+Can add to existing plots using:
+
++-------------------------------------+--------------------------------------+
+| Function                            | Description                          |
++=====================================+======================================+
+| `points()`                          | Adds points                          |
++-------------------------------------+--------------------------------------+
+| `lines()`, `abline()`, `segments()` | Adds lines                           |
++-------------------------------------+--------------------------------------+
+| `text()`                            | Writes text                          |
++-------------------------------------+--------------------------------------+
+| `arrows()`                          | Adds arrows                          |
++-------------------------------------+--------------------------------------+
+| `legend()`                          | Adds a legend                        |
++-------------------------------------+--------------------------------------+
+
+Used in the same manor as `plot()`
+
+```{r}
+x <- 1:20
+y <- c(
+        -1.49, 3.37, 2.59, -2.78, -3.94, 
+        -0.92, 6.43, 8.51, 3.41, -8.23,
+        -12.01, -6.58, 2.87, 14.12, 9.63,
+        -4.58, -14.78, -11.67, 1.17, 15.62
+        )
+```
+
+```{r fig.height=8, fig.width=8}
+plot(x, y, type="n", main="")
+abline(h=c(-5, 5), col="red", lty=2, lwd=2)
+segments(
+        x0=c(5, 15), y0=c(-5, -5), 
+        x1=c(5, 15), y1=c(5, 5), 
+        col="red",
+        lty=3,
+        lwd=2
+        )
+points(x[y >= 5], y[y >= 5], pch=4, col="darkmagenta", cex=2)
+points(x[y <= 5], y[y <= 5], pch=3, col="darkgreen", cex=2)
+points(
+        x[(x >= 5 & x <= 15) & (y > -5 & y < 5)],
+        y[(x >= 5 & x <= 15) & (y > -5 & y < 5)],
+        pch=19,
+        col="blue"
+        )
+points(
+        x[(x < 5 | x > 15) & (y > -5 & y < 5)],
+        y[(x < 5 | x > 15) & (y > -5 & y < 5)]
+        )
+lines(x, y, lty=4)
+arrows(x0=8, y0=14, x1=11, y1=2.5)
+text(x=8, y=15, labels="sweet spot")
+legend(
+        "bottomleft",
+        legend=c(
+                "overall process",
+                "sweet",
+                "standard",
+                "too big",
+                "too small",
+                "sweet y range",
+                "sweet x range"
+                ),
+        pch=c(NA, 19, 1, 4, 3, NA, NA),
+        lty=c(4, NA, NA, NA, NA, 2, 3),
+        col=c(
+            "black", 
+            "blue", 
+            "black", 
+            "darkmagenta", 
+            "darkgreen", 
+            "red", 
+            "red"
+            ),
+        lwd=c(1, NA, NA, NA, NA, 2, 2),
+        pt.cex=c(NA, 1, 1, 2, 2, NA, NA)
+        )
+```
+
+## 7.1 Exercises
+
+### (a) Recreate the following:
+
+![](C:/Users/jagma/AppData/Local/RStudio/tmp/paste-B261B74A.png){width="337"}
+
+```{r fig.height=8, fig.width=8}
+x <- -3:3
+y <- 7:13
+
+plot(x, y, type='n', main='', xlab='', ylab='')
+abline(h=c(7, 13), v=c(-3, 3), col='red', lty=5, lwd=1.5)
+arrows(x0=-2.5, y0=12.5, x1=-1, y1=10.5)
+arrows(x0=2.5, y0=12.5, x1=1, y1=10.5)
+arrows(x0=-2.5, y0=10, x1=-1, y1=10)
+arrows(x0=2.5, y0=10, x1=1, y1=10)
+arrows(x0=-2.5, y0=7.5, x1=-1, y1=9.5)
+arrows(x0=2.5, y0=7.5, x1=1, y1=9.5)
+text(x=0, y=10, labels='SOMETHING\nPROFOUND')
+```
+
+### (b) Using the following data: create a plot of weight Vs height. Use different point characters or colours to distinguish males and females, provide a legend, title, and axis labels.
+
+| Weight (kg) | Height (cm) | Sex    |
+|-------------|-------------|--------|
+| 55          | 161         | female |
+| 85          | 185         | male   |
+| 75          | 174         | male   |
+| 42          | 154         | female |
+| 93          | 188         | male   |
+| 63          | 178         | male   |
+| 58          | 170         | female |
+| 75          | 167         | male   |
+| 89          | 181         | male   |
+| 67          | 178         | female |
+
+```{r fig.height=8, fig.width=8}
+Weight <- c(55, 85, 75, 42, 93, 63, 58, 75, 89, 67)
+Height <- c(161, 185, 174, 154, 188, 178, 170, 167, 181, 178)
+Sex <- factor(c('female', 'male', 'male', 'female', 'male', 'male', 'female',
+                'male', 'male', 'female'))
+B <- data.frame(Weight, Height, Sex)
+
+plot(B$Weight, B$Height, type='n', xlab='Weight / kg', ylab='Height / cm',
+     main='Plot of Weight (kg) vs Height (cm)')
+points(B$Weight[B$Sex == 'male'], B$Height[B$Sex == 'male'], pch=2, col='blue',
+       cex=2)
+points(B$Weight[B$Sex == 'female'], B$Height[B$Sex == 'female'], pch=6, 
+       col='red', cex=2)
+legend(
+    'topleft',
+    legend=c('Male', 'Female'),
+    pch=c(2, 6),
+    col=c('blue', 'red'),
+    pt.cex=c(2, 2)
+)
+```
+
+# 7.4 The `ggplot2` Package
+
+More powerful plotting library than `base-r`
+
+## 7.4.1 A Quick Plot with `qplot`
+
+Need to load with `library()`
+
+```{r}
+library("ggplot2")
+```
+
+```{r fig.height=8, fig.width=8}
+foo <- c(1.1, 2, 3.5, 3.9, 4.2)
+bar <- c(2, 2.2, -1.3, 0, 0.2)
+
+qplot(foo, bar)
+```
+
+Very similar to base-r `plot()`
+
+```{r fig.height=8, fig.width=8}
+qplot(
+    foo, bar, 
+    main="My lovely qplot", 
+    xlab="x axis label", 
+    ylab="location y"
+    )
+```
+
+`qplot()` can be saved as an object and modified
+
+```{r fig.height=8, fig.width=8}
+qux <- qplot(foo, bar)
+qux
+```
+
+## 7.4.2 Setting Appearance Constants with Geoms
+
+Extra setting are modified with `geom_*()` function objects
+
+```{r fig.height=8, fig.width=8}
+qplot(foo, bar, geom="blank") + geom_point() + geom_line()
+```
+
+Each geom object has its own set of keyword argument modifiers
+
+```{r fig.height=8, fig.width=8}
+(
+    qplot(foo, bar, geom="blank") + 
+    geom_point(size=3, shape=6, color="blue") + 
+    geom_line(color="red", linetype=2)
+)
+```
+
+Can easily overwrite geoms
+
+```{r}
+my_qplot <- (
+            qplot(foo, bar, geom="blank") + 
+            geom_line(color="red", linetype=2) 
+            )
+```
+
+```{r fig.height=8, fig.width=8}
+my_qplot + geom_point(size=3, shape=3, color="blue")
+```
+
+```{r fig.height=8, fig.width=8}
+my_qplot + geom_point(size=3, shape=7, color="blue")
+```
+
+## 7.4.3 Aesthetic Mapping with Geoms
+
+Can easily set colours and styles with categorical data
+
+```{r}
+x <- 1:20 
+y <- c(
+        -1.49, 3.37, 2.59, -2.78, -3.94,
+        -0.92, 6.43, 8.51, 3.41, -8.23, 
+        -12.01, -6.58, 2.87, 14.12, 9.63,
+        -4.58, -14.78, -11.67, 1.17, 15.62
+        )
+```
+
+```{r}
+ptype <- rep(NA, length(x=x))
+ptype[y >= 5] <- "too_big"
+ptype[y <= -5] <- "too_small"
+ptype[(x >= 5 & x <= 15) & (y > -5 & y < 5)] <- "sweet"
+ptype[(x < 5 | x > 15) & (y > -5 & y < 5)] <- "standard"
+ptype <- factor(x=ptype)
+ptype
+```
+
+```{r fig.height=8, fig.width=8}
+qplot(x, y, color=ptype, shape=ptype)
+```
+
+Need to use `aes()` to change aesthetic mapping
+
+```{r fig.height=8, fig.width=8}
+(
+    qplot(x, y, color=ptype, shape=ptype) 
+    + geom_point(size=4) 
+    + geom_line(mapping=aes(group=1), color="black", lty=2)
+    + geom_hline(mapping=aes(yintercept=c(-5, 5)), color="red")
+    + geom_segment(
+                mapping=aes(x=5, y=-5, xend=5, yend=5), 
+                color="red",
+                lty=3
+                )
+    + geom_segment(
+                mapping=aes(x=15, y=-5, xend=15, yend=5),
+                color="red",
+                lty=3
+                )
+)
+```
+
+## 7.2 Exercises
+
+### Using the data from Exercise 7.1 (b), redo the plot using ggplot2
+
+```{r fig.height=8, fig.width=8}
+Weight <- c(55, 85, 75, 42, 93, 63, 58, 75, 89, 67)
+Height <- c(161, 185, 174, 154, 188, 178, 170, 167, 181, 178)
+Sex <- factor(
+            c('female', 'male', 'male', 'female', 'male', 
+              'male', 'female', 'male', 'male', 'female')
+            )
+A <- data.frame(Weight, Height, Sex)
+
+p <- (
+        qplot(
+                A$Weight, A$Height, 
+                color=A$Sex, 
+                shape=A$Sex,
+                xlab='Weight / kg',
+                ylab='Height / cm', 
+                main='Plot of Weight (kg) vs Height (cm)'
+            ) 
+    + geom_point(size=4) + labs(color='Sex', shape='Sex')
+    )
+p 
+```
