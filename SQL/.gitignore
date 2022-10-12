@@ -1,0 +1,3 @@
+*.db
+# IDE
+.vscode/
