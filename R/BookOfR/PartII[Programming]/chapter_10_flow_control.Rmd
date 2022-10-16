@@ -1,0 +1,1775 @@
+---
+title: "Chapter 10 Conditions and Loops"
+output: html_notebook
+---
+
+# 10.1 `if` Statements
+
+## 10.1.1 Stand-Alone Statement
+
+Standard construction, if the condition resolves to `TRUE` the code is executed
+
+    if (condtition) {
+        <code>
+    }
+
+Simple example
+
+```{r}
+a <- 3
+my_number <- 4
+
+if (a <= my_number) {
+    a <- a ^ 2
+}
+
+a
+```
+
+Can place any code within the braces, allowing for control over code execution
+
+More complex example:
+
+```{r}
+my_vec <- c(
+    2.73, 5.40, 2.15, 5.29, 1.36, 
+    2.16, 1.41, 6.97, 7.99, 9.52
+)
+my_vec
+```
+
+```{r}
+my_mat <- matrix(c(2, 0, 1, 2, 3, 0, 3, 0, 1, 1), 5, 2)
+my_mat
+```
+
+```{r}
+if (any((my_vec - 1) > 9) || matrix(my_vec, 2, 5)[2, 1] <= 6) {
+    cat("Condition satisfied --\n")
+    
+    new.my_vec <- my_vec
+    new.my_vec[seq(1, 9, 2)] <- NA
+    my_list <- list(aa=new.my_vec, bb=my_mat + 0.5)
+    
+    cat("-- a list with", length(my_list), "members now exists.\n")
+}
+
+my_list
+```
+
+Breaking down the condition
+
+-   First condition with `my_vec` :
+
+```{r}
+print(my_vec - 1)
+print((my_vec - 1) > 9)
+print(any((my_vec - 1) > 9))
+```
+
+-   Second condition OR'd (`||`) with the firsts
+
+```{r}
+print(matrix(my_vec, 2, 5))
+print(matrix(my_vec, 2, 5)[2, 1])
+print(matrix(my_vec, 2, 5)[2, 1] <= 6)
+```
+
+-   Therefore:
+
+```{r}
+any((my_vec - 1) > 9) || (matrix(my_vec, 2, 5)[2, 1] <= 6)
+```
+
+## 10.1.2 `else` Statements
+
+Executes code when the condition for the if-block resolve to `FALSE`
+
+    if (condition) {
+        <code if true>
+    } else {
+        <code if false>
+    }
+
+Simple example from *§10.1.1*
+
+```{r}
+a <- 3
+my_number <- 4
+
+if (a <= my_number) {
+    cat("Condition was", a <= my_number, '\n')
+    a <- a ^ 2
+} else {
+    cat("Condition was", a <= my_number, '\n')
+    a <- a - 3.5
+}
+
+a
+```
+
+running the code again:
+
+```{r}
+if (a <= my_number) {
+    cat("Condition was", a <= my_number, '\n')
+    a <- a ^ 2
+} else {
+    cat("Condition was", a <= my_number, '\n')
+    a <- a - 3.5
+}
+
+a
+```
+
+## 10.1.3 Using `if-else` for Element-wise checks
+
+If-statements can only check a single logical value, will only check the first element
+
+For simple cases `ifelse` can check vectors, consider
+
+```{r}
+x <- 5
+y <- -5:5
+y
+```
+
+now check `x / y` replacing any instance of `Inf` with `NA`
+
+simple logical vector
+
+```{r}
+y == 0
+```
+
+pass to `ifelse` stating `yes` and `no` arguments
+
+```{r}
+result <- ifelse(test=(y==0), yes=NA, no=(x / y))
+result
+```
+
+## 10.1 Exercises
+
+### (a) Create the following two vectors:
+
+```{r}
+vec1 <- c(2, 1, 1, 3, 2, 1, 0)
+vec2 <- c(3, 8, 2, 2, 0, 0, 0)
+```
+
+determine which of the following would result in the string being printed
+
+#### (i) `if ((vec1[1] + vec2[2]) == 10) {cat("Printed")}`
+
+vec1[1] = 2, vec2[2] = 8; 2 + 8 = 10 -\> TRUE
+
+```{r}
+if ((vec1[1] + vec2[2]) == 10) {
+    cat("Printed")
+}
+```
+
+#### (ii) `if (vec1[1] >= 2 && vec2[1] >=2) {cat("Printed")}`
+
+vec1[1] = 2 -\> 2 \>= 2 -\> TRUE; vec2[1] = 3 -\> 3 \>= 2 -\> TRUE; -\> TRUE
+
+```{r}
+if (vec1[1] >= 2 && vec2[1] >=2) {
+    cat("Printed")
+}
+```
+
+#### (iii) `if (all((vec2 - vec1)[c(2, 6)] < 7)) {cat("Printed")}`
+
+vec2 - vec1 = [1, 7, 1, -1, -2, -1, 0]; res[c(2, 6)] = [7, -1];
+
+[7, -1] \< 7 = [FALSE, TRUE]; all([FALSE, TRUE]) = FALSE
+
+```{r}
+if (all((vec2 - vec1)[c(2, 6)] < 7)) {
+    cat("Printed")
+}
+```
+
+#### (iv) `if (!is.na(vec2[3])) {cat("Printed")}`
+
+vec2[3] = 2; is.na(2) = FALSE; !FALSE = TRUE
+
+```{r}
+if (!is.na(vec2[3])) {
+    cat("Printed")
+}
+```
+
+### (b) Using `vec1` and `vec2` from (a), write and execute a line of code that multiplies the corresponding elements of the two vectors together *if* their sum is greater than 3. Otherwise, the code should sum the elements.
+
+```{r}
+result <- ifelse(
+    test=(vec1 + vec2 > 3), 
+    yes=(vec1 * vec2), 
+    no=(vec1 + vec2)
+)
+result
+```
+
+### (c) Write code that takes a square matrix and checks *if* any of the diagonal strings start with the letter *g* lower or upper. If true they should be overwritten with the string `"HERE"`, otherwise replace the matrix with the identity matrix of the same size.
+
+#### (i) `my_mat <- matrix(as.character(1:16), 4, 4)`
+
+```{r}
+my_mat <- matrix(as.character(1:16), 4, 4)
+my_mat_diag = diag(my_mat)
+
+if (any(tolower(substr(my_mat_diag, 1, 1)) == 'g')) {
+    diag(my_mat) <- ifelse(
+        test=(substr(my_mat_diag, 1, 1) == 'g'),
+        yes="HERE",
+        no=my_mat_diag
+    )
+} else {
+    my_mat <- diag(1, dim(my_mat)[1], dim(my_mat)[2])
+}
+
+my_mat
+```
+
+#### (ii) `my_mat <- matrix(c("DANDELION", "Hyacinthus", "Gerbera", "MARIGOLD", "geranium", "ligularia", "Pachysandra", "SNAPDRAGON", "GLADIOLUS"), 3, 3)`
+
+```{r}
+my_mat <- matrix(c("DANDELION", "Hyacinthus", "Gerbera", 
+                   "MARIGOLD", "geranium", "ligularia",
+                   "Pachysandra", "SNAPDRAGON", "GLADIOLUS"), 3, 3)
+my_mat_diag = diag(my_mat)
+
+if (any(tolower(substr(my_mat_diag, 1, 1)) == 'g')) {
+    diag(my_mat) <- ifelse(
+        test=(tolower(substr(my_mat_diag, 1, 1)) == 'g'),
+        yes="HERE",
+        no=my_mat_diag
+    )
+} else {
+    my_mat <- diag(1, dim(my_mat)[1], dim(my_mat)[2])
+}
+
+my_mat
+```
+
+#### (iv) `my_mat <- matrix(c("GREAT", "exercises", "right", "here"), 2, 2, byrow=T)`
+
+```{r}
+my_mat <- matrix(
+    c("GREAT", "exercises", "right", "here"), 
+    2, 
+    2,
+    byrow=T
+)
+my_mat_diag = diag(my_mat)
+
+if (any(tolower(substr(my_mat_diag, 1, 1)) == 'g')) {
+    diag(my_mat) <- ifelse(
+        test=(tolower(substr(my_mat_diag, 1, 1)) == 'g'),
+        yes="HERE",
+        no=my_mat_diag
+    )
+} else {
+    my_mat <- diag(1, dim(my_mat)[1], dim(my_mat)[2])
+}
+
+my_mat
+```
+
+## 10.1.4 Nesting and Stacking Statements
+
+By placing if-statements within other if-statements can create intricate decision paths
+
+### Nesting Example
+
+```{r}
+a <- 3
+my_number <- 4
+
+if (a <= my_number) {
+    cat("First condition was TRUE\n")
+    a <- a ^ 2
+    
+    if (my_number > 3) {
+        cat("Second condition was TRUE\n")
+        b <- seq(1, a, length=my_number)
+        
+    } else {
+        cat("Second condition was FALSE\n")
+        b <- a * my_number
+        
+    }
+} else {
+    cat("First condition was FALSE\n")
+    a <- a - 3.5
+    
+    if (my_number >= 4) {
+        cat("Second condition was TRUE\n")
+        b <- a ^ (3 - my_number)
+        
+    } else {
+        cat("Second condition was FALSE\n")
+        b <- rep(a + my_number, time=3)
+    }
+}
+
+a
+b
+```
+
+```{r}
+a <- 6
+my_number <- 4
+
+if (a <= my_number) {
+    cat("First condition was TRUE\n")
+    a <- a ^ 2
+    
+    if (my_number > 3) {
+        cat("Second condition was TRUE\n")
+        b <- seq(1, a, length=my_number)
+        
+    } else {
+        cat("Second condition was FALSE\n")
+        b <- a * my_number
+        
+    }
+} else {
+    cat("First condition was FALSE\n")
+    a <- a - 3.5
+    
+    if (my_number >= 4) {
+        cat("Second condition was TRUE\n")
+        b <- a ^ (3 - my_number)
+        
+    } else {
+        cat("Second condition was FALSE\n")
+        b <- rep(a + my_number, time=3)
+    }
+}
+
+a
+b
+```
+
+### Stacking Alternative
+
+```{r}
+a <- 3
+my_number <- 4
+
+if (a <= my_number && my_number > 3) {
+    cat("Same as 'first condition TRUE and second TRUE'\n")
+    a <- a ^ 2
+    b <- seq(1, a, length=my_number)
+} else if (a <= my_number && my_number <= 3) {
+    cat("Same as 'first condition TRUE and second FALSE'\n")
+    a <- a ^ 2
+    b <- a * my_number
+} else if (my_number >= 4) {
+    cat("Same as 'first condition FALSE and second TRUE'\n")
+    a <- a - 3.5
+    b <- a ^ (3 - my_number)
+} else {
+    cat("Same as 'first condition FALSE and second FALSE'\n")
+    a <- a - 3.5
+    b <- rep(a + my_number, times=3)
+}
+
+a
+b
+```
+
+```{r}
+a <- 6
+my_number <- 4
+
+if (a <= my_number && my_number > 3) {
+    cat("Same as 'first condition TRUE and second TRUE'\n")
+    a <- a ^ 2
+    b <- seq(1, a, length=my_number)
+} else if (a <= my_number && my_number <= 3) {
+    cat("Same as 'first condition TRUE and second FALSE'\n")
+    a <- a ^ 2
+    b <- a * my_number
+} else if (my_number >= 4) {
+    cat("Same as 'first condition FALSE and second TRUE'\n")
+    a <- a - 3.5
+    b <- a ^ (3 - my_number)
+} else {
+    cat("Same as 'first condition FALSE and second FALSE'\n")
+    a <- a - 3.5
+    b <- rep(a + my_number, times=3)
+}
+
+a
+b
+```
+
+## 10.1.5 The `switch` Function
+
+Long if-else chain scenario:
+
+```{r}
+my_string = "Peter"
+
+if (my_string == "Homer") {
+    foo <- 12
+
+} else if (my_string == "Marge") {
+    foo <- 34
+
+} else if (my_string == "Bart") {
+    foo <- 56
+
+} else if (my_string == "Lisa") {
+    foo <- 78
+
+} else if (my_string == "Maggie") {
+    foo <- 90
+
+} else {
+    foo <- NA
+}
+
+foo
+```
+
+Works fine but is quite cumbersome, can be handled in a more compact form with the `switch` function
+
+    switch(expression=<expr>, <condition>=<value>, ..., <default>)
+
+```{r}
+my_string <- "Lisa"
+foo <- switch(
+    EXPR=my_string,
+    Homer=12,
+    Marge=34,
+    Bart=56,
+    Lisa=78,
+    Maggie=90,
+    NA
+)
+foo
+```
+
+Argument tags must exactly match possible results of the expression
+
+For integers it uses positional matching:
+
+```{r}
+my_num <- 3
+foo <- switch(my_num, 12, 34, 56, 78, NA)
+foo
+```
+
+any values given outside of the number of arguments given to `switch` will result in `NULL`
+
+cannot be used for more complicated conditions, require explicit if-statements for that
+
+## 10.2 Exercises
+
+### (a) Write an explicit stack of if-statements that does the same as the integer `switch` function from before. Test with `my_num <- 3` and `my_num <- 0`
+
+```{r}
+my_num <- 3
+
+if (my_num == 1) {
+    foo <- 12
+
+} else if (my_num == 2) {
+    foo <- 34    
+
+} else if (my_num == 3) {
+    foo <- 56
+
+} else if (my_num == 4) {
+    foo <- 78
+
+} else if (my_num == 5) {
+    foo <- NA
+
+} else {
+    foo <- NULL
+}
+
+foo
+```
+
+```{r}
+my_num <- 0
+
+if (my_num == 1) {
+    foo <- 12
+
+} else if (my_num == 2) {
+    foo <- 34    
+
+} else if (my_num == 3) {
+    foo <- 56
+
+} else if (my_num == 4) {
+    foo <- 78
+
+} else if (my_num == 5) {
+    foo <- NA
+
+} else {
+    foo <- NULL
+}
+
+foo
+```
+
+### (b) Following items (i-iv) write a set of nested if-statements that produce a new numeric vector according to the following rules:
+
+-   First, *if* there are any instances of `"HIGH"` in `dose_level`, perform the following
+
+    -   Check if `low_dose` is greater than or equal to 10
+
+        -   If so overwrite `low_dose` with 10
+
+        -   Otherwise overwrite `low_dose` by itself divided by 2
+
+    -   Check if `med_dose` is greater than or equal to 26
+
+        -   If so overwrite `med_dose` with 26
+
+    -   Check if `high_dose` is less than 60
+
+        -   If so overwrite `high_dose` with 60
+
+        -   Otherwise overwrite `high_dose` by itself multiplied by 1.5
+
+    -   Create vector named `dosage` with the value of `low_dose` repeated to match the length of `dose_level`
+
+    -   Overwrite the elements in `dosage` corresponding to the index positions of instances of `"Med"` in `dose_level` by `med_dose`
+
+    -   Overwrite elements in `dosage` corresponding to the index positions of instances of `"High"` in `dose_level` by `high_dose`
+
+-   Otherwise:
+
+    -   Create a new version of `dose_level`, a factor with levels `"Low"` and `"Med"` only, with labels `"Small"` and `"Large"`
+
+    -   Check if `low_dose` is less than 15 **AND** `med_dose` is less than 35
+
+        -   If so overwrite `low_dose` by itself multiplied by 2 and overwrite `med_dose` by itself plus `high_dose`
+
+    -   Create a vector named `dosage` which is the value of `low_dose` repeated to match the length of `dose_level`
+
+    -   Overwrite the elements corresponding to the index positions of instances of `"Large"` in `dose_level` by `med_dose`
+
+#### (i) Given:
+
+```{r}
+low_dose <- 12.5
+med_dose <- 25.3
+high_dose <- 58.1
+dose_level <- factor(
+    c("Low", "High", "High", "High", "Low", "Med", "Med"),
+    levels=c("Low", "Med", "High")
+)
+```
+
+```{r}
+if (any(dose_level == "High")) {
+    if (low_dose >= 10) {
+        low_dose <- 10
+
+    } else {
+        low_dose <- low_dose / 2
+    }
+    
+    if (med_dose >= 26) {
+      med_dose <- 26
+    } 
+    
+    if (high_dose < 60) {
+        high_dose <- 60
+
+    } else {
+        high_dose <- high_dose * 1.5
+    }
+    
+    dosage <- rep(low_dose, length=length(dose_level))
+    
+    dosage[dose_level == "Med"] <- med_dose
+    dosage[dose_level == "High"] <- high_dose
+    
+} else {
+    dose_levels <- factor(dose_level, labels=c("Small", "Large"))
+    
+    if (low_dose < 15 && med_dose < 35) {
+        low_dose <- low_dose * 2
+        med_dose <- med_dose + high_dose
+    }
+    
+    dosage <- rep(low_dose, length=length(dose_level))
+    
+    dosage[dose_level == "Large"] <- med_dose
+}
+
+dosage
+```
+
+#### (ii) Given:
+
+```{r}
+low_dose <- 12.5
+med_dose <- 25.3
+high_dose <- 58.1
+dose_level <- factor(
+    c("Low", "Low", "Low", "Med", "Low", "Med", "Med"),
+    levels=c("Low", "Med", "High")
+)
+```
+
+```{r}
+if (any(dose_level == "High")) {
+    if (low_dose >= 10) {
+        low_dose <- 10
+
+    } else {
+        low_dose <- low_dose / 2
+    }
+    
+    if (med_dose >= 26) {
+      med_dose <- 26
+    } 
+    
+    if (high_dose < 60) {
+        high_dose <- 60
+
+    } else {
+        high_dose <- high_dose * 1.5
+    }
+    
+    dosage <- rep(low_dose, length=length(dose_level))
+    
+    dosage[dose_level == "Med"] <- med_dose
+    dosage[dose_level == "High"] <- high_dose
+    
+} else {
+    dose_level <- factor(dose_level, labels=c("Small", "Large"))
+    
+    if (low_dose < 15 && med_dose < 35) {
+        low_dose <- low_dose * 2
+        med_dose <- med_dose + high_dose
+    }
+    
+    dosage <- rep(low_dose, length=length(dose_level))
+    
+    dosage[dose_level == "Large"] <- med_dose
+}
+
+dosage
+dose_level
+```
+
+#### (iii) Given:
+
+```{r}
+low_dose <- 9
+med_dose <- 49
+high_dose <- 61
+dose_level <- factor(
+    c("Low", "Med", "Med"),
+    levels=c("Low", "Med", "High")
+)
+```
+
+```{r}
+if (any(dose_level == "High")) {
+    if (low_dose >= 10) {
+        low_dose <- 10
+
+    } else {
+        low_dose <- low_dose / 2
+    }
+    
+    if (med_dose >= 26) {
+      med_dose <- 26
+    } 
+    
+    if (high_dose < 60) {
+        high_dose <- 60
+
+    } else {
+        high_dose <- high_dose * 1.5
+    }
+    
+    dosage <- rep(low_dose, length=length(dose_level))
+    
+    dosage[dose_level == "Med"] <- med_dose
+    dosage[dose_level == "High"] <- high_dose
+    
+} else {
+    dose_level <- factor(dose_level, labels=c("Small", "Large"))
+    
+    if (low_dose < 15 && med_dose < 35) {
+        low_dose <- low_dose * 2
+        med_dose <- med_dose + high_dose
+    }
+    
+    dosage <- rep(low_dose, length=length(dose_level))
+    
+    dosage[dose_level == "Large"] <- med_dose
+}
+
+dosage
+dose_level
+```
+
+#### (iv) Given:
+
+```{r}
+low_dose <- 9
+med_dose <- 49
+high_dose <- 61
+dose_level <- factor(
+    c("Low", "High", "High", "High", "Low", "Med", "Med"),
+    levels=c("Low", "Med", "High")
+)
+```
+
+```{r}
+if (any(dose_level == "High")) {
+    if (low_dose >= 10) {
+        low_dose <- 10
+
+    } else {
+        low_dose <- low_dose / 2
+    }
+    
+    if (med_dose >= 26) {
+      med_dose <- 26
+    } 
+    
+    if (high_dose < 60) {
+        high_dose <- 60
+
+    } else {
+        high_dose <- high_dose * 1.5
+    }
+    
+    dosage <- rep(low_dose, length=length(dose_level))
+    
+    dosage[dose_level == "Med"] <- med_dose
+    dosage[dose_level == "High"] <- high_dose
+    
+} else {
+    dose_level <- factor(dose_level, labels=c("Small", "Large"))
+    
+    if (low_dose < 15 && med_dose < 35) {
+        low_dose <- low_dose * 2
+        med_dose <- med_dose + high_dose
+    }
+    
+    dosage <- rep(low_dose, length=length(dose_level))
+    
+    dosage[dose_level == "Large"] <- med_dose
+}
+
+dosage
+```
+
+### (c) Assume `my_num` can only ever be a single int between 0 and 9. Use `ifelse` and `switch` to take `my_num` and return the matching character string corresponding to the value
+
+```{r}
+my_num <- 0:9
+for (i in my_num) {
+    cat(
+        switch(
+            EXPR=i + 1,
+            "zero",
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine"
+        ),
+        ' '
+    )
+}
+```
+
+# 10.2 Coding Loops
+
+## 10.2.1 `for` loops
+
+Take the form:
+
+    for (<index> in <vector>) {
+        <code>
+    }
+
+The loops uses the index to loop through the vector incrementing the index until the end of the vector
+
+Simple example:
+
+```{r}
+for (my_item in 5:7) {
+    cat("--Braced Area Begins--\n")
+    cat("the current item is", my_item, "\n")
+    cat("--Braced Area Ends--\n\n")
+}
+```
+
+Can use loops to manipulate objects that exist outside the loop
+
+```{r}
+counter <- 0
+
+for (my_item in 5:7) {
+    counter <- counter + 1
+    cat("The item in run", counter, "is", my_item, "\n")
+}
+```
+
+### Looping via Index or Value
+
+Can use the index to represent the values of the vector or its index
+
+Value:
+
+```{r}
+my_vec <- c(0.4, 1.1, 0.34, 0.55)
+
+for (i in my_vec) {
+    print(2 * i)
+}
+```
+
+Index:
+
+```{r}
+for (i in 1:length(my_vec)) {
+    print(2 * my_vec[i])
+}
+```
+
+Both have advantages, with the index giving more use flexibility, and value giving an ease of use
+
+Consider the following list:
+
+```{r}
+foo <- list(
+    aa=c(3.4, 1),
+    bb=matrix(1:4, 2, 2),
+    cc=matrix(c(T, T, F, T, F, F), 3, 2),
+    dd="string here",
+    ee=matrix(c("red", "green", "blue", "yellow"))
+)
+foo
+```
+
+Require auxiliary variables to loop through cleanly
+
+```{r}
+name <- names(foo)
+name
+```
+
+set up some variables to store information from the loop
+
+```{r}
+is.mat <- rep(NA, length(foo))
+is.mat # will say whether element of foo is a matrix
+```
+
+```{r}
+nr <- is.mat # number of rows for each matrix
+nc <- is.mat # number of columns for each matrix
+data.type <- is.mat # data type of each matrix
+```
+
+use loop with if-else to get information from the list `foo` to store in a dataframe
+
+```{r}
+for (i in 1:length(foo)) {
+    member <- foo[[i]]
+    
+    if (is.matrix(member)) {
+        is.mat[i] <- "Yes"
+        nr[i] <- nrow(member)
+        nc[i] <- ncol(member)
+        data.type[i] <- class(as.vector(member))
+
+    } else {
+        is.mat[i] <- "No"
+    }
+}
+
+bar <- data.frame(
+    name,
+    is.mat,
+    nr,
+    nc,
+    data.type,
+    stringsAsFactors=FALSE
+)
+bar
+```
+
+### Nesting `for` loops
+
+Can nest for loops like if-statements, inner loop is executed in full before the outer loop index is incremented
+
+```{r}
+loop_vec_1 <- 5:7
+loop_vec_1
+
+loop_vec_2 <- 9:6
+loop_vec_2
+
+foo <- matrix(NA, length(loop_vec_1), length(loop_vec_2))
+foo
+```
+
+Use loop vectors to populate `foo` with the product of the vectors at each index
+
+```{r}
+for (i in 1:length(loop_vec_1)) {
+    for (j in 1:length(loop_vec_2)) {
+        foo[i, j] <- loop_vec_1[i] * loop_vec_2[j] 
+    }
+}
+foo
+```
+
+Another example where the inner loop variable matches the outer one:
+
+```{r}
+foo <- matrix(NA, length(loop_vec_1), length(loop_vec_2))
+foo
+```
+
+```{r}
+for (i in 1:length(loop_vec_1)) {
+    for (j in 1:i) {
+        foo[i, j] <- loop_vec_1[i] + loop_vec_2[j]
+    }
+}
+foo
+```
+
+## 10.3 Exercises
+
+### (a) Rewrite the nested loop example where the values of `foo` where filled with products with a single for-loop
+
+```{r}
+loop_vec_1 <- 5:7
+loop_vec_2 <- 9:6
+foo <- matrix(NA, length(loop_vec_1), length(loop_vec_2))
+
+for (i in 1:length(loop_vec_1)) {
+    foo[i,] <- loop_vec_1[i] * loop_vec_2
+}
+
+foo
+```
+
+### (b) From §10.1.5 using the `switch` statement below, take the character vector and return the corresponding integer vector
+
+    switch(
+        EXPR=my_string, 
+        Homer=12, 
+        Marge=34, 
+        Bart=56,
+        Lisa=78,
+        Maggie=90,
+        NA
+    )
+
+```{r}
+char_vec <- c("Peter", "Homer", "Lois", "Stewie", "Maggie", "Bart")
+int_vec <- 1:length(char_vec)
+
+for (i in 1:length(char_vec)) {
+    int_vec[i] <- switch(
+        EXPR=char_vec[i], 
+        Homer=12, 
+        Marge=34, 
+        Bart=56,
+        Lisa=78,
+        Maggie=90,
+        NA
+    )
+}
+
+int_vec
+```
+
+### (c) Suppose you have a list of lists, write a nested loop to search any of these lists and count the number of matrices and confirm for the following lists
+
+#### (i) The answer is 4
+
+```{r}
+my_list <- list(
+    aa=c(3, 4, 1),
+    bb=matrix(1:4, 2, 2),
+    cc=matrix(c(T, T, F, T, F, F), 3, 2),
+    dd="string here",
+    ee=list(
+        c("hello", "you"),
+        matrix(c("hello", "there"))
+    ),
+    ff=matrix(c("red", "green", "blue", "yellow"))
+)
+
+mat.count <- 0
+
+for (i in 1:length(my_list)) {
+    member <- my_list[[i]]
+    
+    if (is.matrix(member)) {
+        mat.count <- mat.count + 1
+
+    } else if (is.list(member)) {
+        for (j in 1:length(member)) {
+            if (is.matrix(member[[j]])) {
+                mat.count <- mat.count + 1
+            }
+        }
+    }
+}
+
+mat.count
+```
+
+#### (ii) The answer is 0
+
+```{r}
+my_list <- list("tricked you", as.vector(matrix(1:6, 3, 2)))
+
+mat.count <- 0
+
+for (i in 1:length(my_list)) {
+    member <- my_list[[i]]
+    
+    if (is.matrix(member)) {
+        mat.count <- mat.count + 1
+
+    } else if (is.list(member)) {
+        for (j in 1:length(member)) {
+            if (is.matrix(member[[j]])) {
+                mat.count <- mat.count + 1
+            }
+        }
+    }
+}
+
+mat.count
+```
+
+#### (iii) The answer is 2
+
+```{r}
+my_list <- list(
+    list(1, 2, 3),
+    list(c(3, 2), 2),
+    list(c(1, 2), matrix(c(1, 2))),
+    rbind(1:10, 100:91)
+)
+
+mat.count <- 0
+
+for (i in 1:length(my_list)) {
+    member <- my_list[[i]]
+    
+    if (is.matrix(member)) {
+        mat.count <- mat.count + 1
+
+    } else if (is.list(member)) {
+        for (j in 1:length(member)) {
+            if (is.matrix(member[[j]])) {
+                mat.count <- mat.count + 1
+            }
+        }
+    }
+}
+
+mat.count
+```
+
+## 10.2.2 While loops
+
+Instead of running for a known number of iterations, while loops run until a condition is returned as FALSE
+
+    while (<condition>) {
+        <code>
+    }
+
+Simple while-loop:
+
+```{r}
+my_val <- 5
+
+while (my_val < 10) {
+    my_val <- my_val + 1
+    
+    cat("\n'my_val' is now", my_val, "\n")
+    cat("'my_condition' is now", my_val < 10, "\n")
+}
+```
+
+Another more complex example:
+
+loop through vector to populate a list with identity matrices of the size of the value in the vector, stop if the value is greater than 5 or the index is greater than the length of the vector
+
+```{r}
+my_list <- list()
+counter <- 1
+my_numbers <- c(4, 5, 1, 2, 6, 2, 4, 6, 6, 2)
+my_condition <- my_numbers[counter] <= 5
+
+while (my_condition) {
+    my_list[[counter]] <- diag(my_numbers[counter])
+    counter <- counter + 1
+    
+    if (counter <= length(my_numbers)) {
+        my_condition <- my_numbers[counter] <= 5
+
+    } else {
+        my_condtion <- FALSE
+    }
+}
+
+my_list
+```
+
+## 10.4 Exercises
+
+### (a) Using the `my_list` example from §10.2.2 what would determine the result for the following vectors
+
+#### (i) `my_numbers <- c(2, 2, 2, 2, 5, 2)`
+
+```{r}
+list(
+    diag(2),
+    diag(2),
+    diag(2),
+    diag(2),
+    diag(5),
+    diag(2)
+)
+```
+
+#### (ii) `my_numbers <- 2:20`
+
+```{r}
+list(
+    diag(2),
+    diag(3),
+    diag(4),
+    diag(5)
+)
+```
+
+#### (iii) `my_numbers <- c(10, 1, 10, 1, 2)`
+
+```{r}
+list()
+```
+
+### (b) Write a while loop that computes and stores the factorial of any non-negative integer. Using the loop confirm the following
+
+#### (i) 5! = 120
+
+```{r}
+my_num <- 5
+
+res <- 1
+while (my_num >= 0) {
+    if (my_num != 0) {
+        res <- res * my_num
+    }
+    
+    my_num <- my_num - 1
+}
+res
+```
+
+#### (ii) 12! = 479,001,600
+
+```{r}
+my_num <- 12
+
+res <- 1
+while (my_num >= 0) {
+    if (my_num != 0) {
+        res <- res * my_num
+    }
+    
+    my_num <- my_num - 1
+}
+res
+```
+
+#### (iii) 0! = 1
+
+```{r}
+my_num <- 0
+
+res <- 1
+while (my_num >= 0) {
+    if (my_num != 0) {
+        res <- res * my_num
+    }
+    
+    my_num <- my_num - 1
+}
+res
+```
+
+### (c) Consider the below code, complete it so that it inspects `my_string` until it reaches the second instance of the letter *e* or the end of the string. The result should be the whole string if there is no 2nd *e* or the string up to but not including the second *e*
+
+    my_string <- "R fever"
+    index <- 1
+    ecount <- 0
+    result <- my_string
+
+    while (ecount < 2 && index <= nchar(my_string)) {
+        # operations #
+    }
+    result
+
+```{r}
+my_string <- "R fever"
+index <- 1
+ecount <- 0
+result <- my_string
+
+while (ecount < 2 && index <= nchar(my_string)) {
+    letter <- tolower(substr(my_string, index, index))
+    
+    if (letter == 'e') {
+        ecount <- ecount + 1
+    }
+    
+    if (ecount == 2) {
+        result <- substr(my_string, 1, index - 1)
+    }
+    
+    index <- index + 1
+}
+result
+```
+
+Further test strings:
+
+#### (i) `my_string <- "beautiful"` ⟹ "beautiful"
+
+```{r}
+my_string <- "beautiful"
+index <- 1
+ecount <- 0
+result <- my_string
+
+while (ecount < 2 && index <= nchar(my_string)) {
+    letter <- tolower(substr(my_string, index, index))
+    
+    if (letter == 'e') {
+        ecount <- ecount + 1
+    }
+    
+    if (ecount == 2) {
+        result <- substr(my_string, 1, index - 1)
+    }
+    
+    index <- index + 1
+}
+result
+```
+
+#### (ii) `my_string <- "ECCENTRIC"` ⟹ "ECC"
+
+```{r}
+my_string <- "ECCENTRIC"
+index <- 1
+ecount <- 0
+result <- my_string
+
+while (ecount < 2 && index <= nchar(my_string)) {
+    letter <- tolower(substr(my_string, index, index))
+    
+    if (letter == 'e') {
+        ecount <- ecount + 1
+    }
+    
+    if (ecount == 2) {
+        result <- substr(my_string, 1, index - 1)
+    }
+    
+    index <- index + 1
+}
+result
+```
+
+#### (iii) `my_string <- "ElAbOrAte"` ⟹ "ElAbOrAt"
+
+```{r}
+my_string <- "ElAbOrAte"
+index <- 1
+ecount <- 0
+result <- my_string
+
+while (ecount < 2 && index <= nchar(my_string)) {
+    letter <- tolower(substr(my_string, index, index))
+    
+    if (letter == 'e') {
+        ecount <- ecount + 1
+    }
+    
+    if (ecount == 2) {
+        result <- substr(my_string, 1, index - 1)
+    }
+    
+    index <- index + 1
+}
+result
+```
+
+#### (iv) `my_string <- "eeeeek!"` ⟹ "e"
+
+```{r}
+my_string <- "eeeeek!"
+index <- 1
+ecount <- 0
+result <- my_string
+
+while (ecount < 2 && index <= nchar(my_string)) {
+    letter <- tolower(substr(my_string, index, index))
+    
+    if (letter == 'e') {
+        ecount <- ecount + 1
+    }
+    
+    if (ecount == 2) {
+        result <- substr(my_string, 1, index - 1)
+    }
+    
+    index <- index + 1
+}
+result
+```
+
+## 10.2.3 Implicit Looping with apply
+
+For relatively routine loops can avoid some details by using the `apply` function
+
+```{r}
+foo <- matrix(1:12, 4, 3)
+foo
+```
+
+Example find sum of each row of a matrix, can't use `sum()`
+
+```{r}
+sum(foo)
+```
+
+Instead want:
+
+```{r}
+row.totals <- rep(NA, times=nrow(foo))
+
+for (i in 1:nrow(foo)) {
+    row.totals[i] <- sum(foo[i,])
+}
+
+row.totals
+```
+
+Alternative using `apply`:
+
+```{r}
+row.totals2 <- apply(X=foo, MARGIN=1, FUN=sum)
+row.totals2
+```
+
+`MARGIN` refers to the matrix positional dimension, changing to 2 will give the column sums
+
+```{r}
+apply(X=foo, MARGIN=2, FUN=sum)
+```
+
+Functions should be appropriate for the margin selected, where that be vectors or matrices
+
+```{r}
+bar <- array(1:29, dim=c(3, 3, 2))
+bar
+```
+
+```{r}
+apply(bar, 3, FUN=diag)
+```
+
+### Other `apply` functions
+
+`tapply` for subsets of objects of interest
+
+```{r}
+dia.url <- "http://jse.amstat.org/v9n2/4Cdata.txt"
+diamonds <- read.table(dia.url)
+names(diamonds) <- c("Carat", "Colour", "Clarity", "Cert", "Price")
+diamonds[1:5,]
+```
+
+Add up total value of the diamonds present, but separate according to `Colour`
+
+```{r}
+tapply(diamonds$Price, INDEX=diamonds$Colour, FUN=sum)
+```
+
+`lapply` for list objects
+
+```{r}
+baz <- list(
+    aa=c(3.4, 1),
+    bb=matrix(1:4, 2, 2),
+    cc=matrix(c(T, T, F, T, F, F), 3, 2),
+    dd="string here",
+    ee=matrix(c("red", "green", "blue", "yellow"))
+)
+baz
+```
+
+check for matrices in a single line:
+
+```{r}
+lapply(baz, FUN=is.matrix)
+```
+
+`sapply` return the same as `lapply` but in an array form
+
+```{r}
+sapply(baz, FUN=is.matrix)
+```
+
+All `apply` functions allow for additional arguments to be passed to `FUN` (via `…`)
+
+```{r}
+apply(foo, 1, sort, decreasing=TRUE)
+```
+
+## 10.5 Exercises
+
+### (a) Write an implicit loop that calculates the product of all the column elements returned by the call `apply(foo, 1, sort, decreasing=TRUE)`
+
+```{r}
+apply(apply(foo, 1, sort, decreasing=TRUE), 2, prod)
+```
+
+### (b) Convert the following for-loop into an implicit loop
+
+```{r}
+matlist <- list(
+    matrix(c(T, F, T, T), 2, 2),
+    matrix(c("a", "c", "b", "z", "p", "q"), 3, 2),
+    matrix(1:8, 2, 4)
+)
+matlist
+```
+
+for-loop
+
+```{r}
+res <- list()
+for (i in 1:length(matlist)) {
+    res[[i]] <- t(matlist[[i]])
+}
+res
+```
+
+implicit
+
+```{r}
+lapply(matlist, t)
+```
+
+### (c) Store the following 4x4x2x3 array, then do the following:
+
+```{r}
+qux <- array(96:1, dim=c(4, 4, 2, 3))
+qux
+```
+
+#### (i) write an implicit loop that obtains the diagonal elements of all second-layer matrices only to produce the following
+
+        [,1] [,2] [,3]
+    [1,]  80   48   16
+    [2,]  75   43   11
+    [3,]  70   38    6
+    [4,]  65   33    1
+
+```{r}
+apply(qux[,,2,], 3, diag)
+```
+
+#### (ii) write an implicit loop that will return the dimensions for each three matrices formed by accessing the fourth column of every matrix, wrapped by another implicit loop that finds the row sums of the returned structure, resulting in the following vector:
+
+    [1] 12 6
+
+```{r}
+apply(apply(qux[,4,,], 3, dim), 1, sum)
+```
+
+# 10.3 Other Flow Control Mechanisms
+
+## 10.3.1 Declaring `break` or `next`
+
+Can terminate a loop early using `break`
+
+```{r}
+foo <- 5
+bar <- c(2, 3, 1.1, 4, 0, 4.1, 3)
+
+loop1.result <- rep(NA, length(bar))
+
+for (i in 1:length(bar)) {
+    temp <- foo / bar[i]
+    
+    if (is.finite(temp)) {
+        loop1.result[i] <- temp
+
+    } else {
+        break
+    }
+}
+
+loop1.result
+```
+
+Can instead use `next` to skip to the next iteration (like `continue`)
+
+```{r}
+loop2.result <- rep(NA, length(bar))
+
+for (i in 1:length(bar)) {
+    temp <- foo / bar[i]
+    
+    if (bar[i] == 0) {
+        next
+    }
+    
+    loop2.result[i] <- foo / bar[i]
+}
+
+loop2.result
+```
+
+`break` or `next` only apply for the innermost loop for nested loops
+
+```{r}
+loop_vec_1 <- 5:7
+loop_vec_2 <- 9:6
+
+baz <- matrix(NA, length(loop_vec_1), length(loop_vec_2))
+
+for (i in 1:length(loop_vec_1)) {
+    for (j in 1:length(loop_vec_2)) {
+        temp <- loop_vec_1[i] * loop_vec_2[j]
+        
+        if (temp >= 54) {
+            next
+        }
+        
+        baz[i, j] <- temp
+    }
+}
+
+baz
+```
+
+## 10.3.2 The `repeat` statement
+
+General definition:
+
+    repeat {
+        <code>
+    }
+
+equivalent to `while(true)` loop, requires a `break` condition
+
+Fibonacci example:
+
+```{r}
+fib.a <- 1
+fib.b <- 1
+
+repeat {
+    temp <- fib.a + fib.b
+    fib.a <- fib.b
+    fib.b <- temp
+    cat(fib.b, ", ", sep="")
+    
+    if (fib.b > 150) {
+        cat("BREAK NOW...\n")
+        break
+    }
+}
+```
+
+## 10.6 Exercises
+
+### (a) Using the objects bellow do the following:
+
+```{r}
+foo <- 5
+bar <- c(2, 3, 1.1, 4, 0, 4.1, 3)
+```
+
+#### (i) Write a while-loop without using break or next that will reach the same result as the break example in §10.3.1 (`loop2.result`)
+
+```{r}
+index <- 1
+loop2.result <- rep(NA, length(bar))
+
+while (index <= length(bar)) {
+    temp <- foo / bar[index]
+    
+    if (is.finite(temp)) {
+        loop2.result[index] <- temp
+    }
+    
+    index <- index + 1
+}
+
+loop2.result
+```
+
+#### (ii) Obtain the same result as `loop2.result` using an ifelse function
+
+```{r}
+ifelse(is.finite(foo / bar), foo / bar, NA)
+```
+
+### (b) Using the vector below, fill `my_list` with identity matrices of size of each vector element, the loop should stop when the element is greater than 5 or the vector ends
+
+```{r}
+my_numbers <- c(4, 5, 1, 2, 6, 2, 4, 6, 6, 2)
+```
+
+#### (i) write a for loop using break to do so
+
+```{r}
+my_list <- list()
+
+for (i in 1:length(my_numbers)) {
+    if (my_numbers[i] > 5) {
+        break
+    }
+    
+    my_list[[i]] <- diag(my_numbers[i])
+}
+
+my_list
+```
+
+#### (ii) write a repeat statement with break to do the same
+
+```{r}
+index <- 1
+
+repeat {
+    if (index > length(my_numbers) || my_numbers[index] > 5) {
+        break
+    } 
+    
+    my_list[[index]] <- diag(my_numbers[index])
+    
+    index <- index + 1
+}
+
+my_list
+```
+
+### (c) Suppose you have two lists both filled with numeric matrices as their members. All members have finite, non-missing values. Write a nested pair of for loops to create a result list of all possible matrix products of the members of the two lists, following these guidelines:
+
+-   the first list should be search in the outer loop, and the second in the inner loop
+
+-   interested only in the possible products
+
+-   if a particular multiple isn't possible (if ncol of list 1 != nrow of list 2) then skip multiplication, store as string "not possible" at that position
+
+-   can define a counter to keep track of the current result position
+
+    -   note: `length(res) == length(list1) * length(list2)`
+
+#### (i) Given:
+
+```{r}
+mat_list_1 <- list(
+    matrix(1:4, 2, 2), 
+    matrix(1:4), 
+    matrix(1:8, 4, 2)
+)
+mat_list_2 <- mat_list_1
+```
+
+All should be not possible except `[[1]]` and `[[7]]`
+
+```{r}
+counter <- 1
+result_list <- list()
+
+for (i in 1:length(mat_list_1)) {
+    for(j in 1:length(mat_list_2)) {
+        if (ncol(mat_list_1[[i]]) != nrow(mat_list_2[[j]])) {
+            result_list[[counter]] <- "not possible"
+            counter <- counter + 1
+            next
+        }
+        
+        result_list[[counter]] <- mat_list_1[[i]] %*% mat_list_2[[j]]
+        counter <- counter + 1
+    }
+}
+
+result_list
+```
+
+#### (ii) Given:
+
+```{r}
+mat_list_1 <- list(
+    matrix(1:4, 2, 2),
+    matrix(2:5, 2, 2),
+    matrix(1:16, 4, 2)
+)
+mat_list_2 <- list(
+    matrix(1:8, 2, 4),
+    matrix(10:7, 2, 2),
+    matrix(9:2, 4, 2)
+)
+```
+
+then only `[[3]]`, `[[6]]`, and `[[9]]` are not possible
+
+```{r}
+counter <- 1
+result_list <- list()
+
+for (i in 1:length(mat_list_1)) {
+    for(j in 1:length(mat_list_2)) {
+        if (ncol(mat_list_1[[i]]) != nrow(mat_list_2[[j]])) {
+            result_list[[counter]] <- "not possible"
+            counter <- counter + 1
+            next
+        }
+        
+        result_list[[counter]] <- mat_list_1[[i]] %*% mat_list_2[[j]]
+        counter <- counter + 1
+    }
+}
+
+result_list
+```
