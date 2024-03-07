@@ -11,6 +11,7 @@ Project Statuses:
 ## C / C++
 * [ ] Effective C by Robert C. Seacord
 * [ ] Learn C++ (learncpp.com)
+* [ ] Complete Modern C++ (Poash Technologies)
 
 ## F#
 * [ ] The Book of F#: Breaking Free with Managed Functional Programming by Dave Fancher
@@ -36,3 +37,4 @@ Project Statuses:
 
 ## Web Dev
 * [ ] Learn to Code with JavaScript by Darren Jones
+* [ ] Your First Week With React by Michael Wanyoike et al.
