@@ -1,4 +1,4 @@
-module TheBookOfFSharp.RpnCalculator
+﻿module TheBookOfFSharp.RpnCalculator
 
 open System
 
