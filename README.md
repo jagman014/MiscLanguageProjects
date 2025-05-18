@@ -26,14 +26,17 @@ Project Statuses:
 ## R
 * [ ] The Book of R by Tilman M. Davies
 
-## SQL
-* [ ] Practical SQL by Anthony DeBarros
+## Rust
+* [ ] The Rust Programming Language by Steve Klabnik, and Carol Nichols
 
 ## Shell
 * [ ] Bash
     * [ ] Shell Scripting (Udemy)
 * [x] Powershell
     * [x] Master Powershell (Udemy)
+
+## SQL
+* [x] Practical SQL by Anthony DeBarros
 
 ## Web Dev
 * [ ] Learn to Code with JavaScript by Darren Jones
