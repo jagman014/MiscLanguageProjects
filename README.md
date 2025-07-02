@@ -23,6 +23,10 @@ Project Statuses:
 
 * [ ] The Book of F#: Breaking Free with Managed Functional Programming by Dave Fancher
 
+## Go \#
+
+* [ ] Learn Go in 3 Hours by Jonathan Bodner
+
 ## Haskell
 
 * [ ] Learn You a Haskell for Great Good! by Miran Lipovača
