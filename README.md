@@ -25,7 +25,7 @@ Project Statuses:
 
 ## Go \#
 
-* [ ] Learn Go in 3 Hours by Jonathan Bodner
+* [x] Learn Go in 3 Hours by Jonathan Bodner
 
 ## Haskell
 
