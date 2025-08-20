@@ -53,5 +53,6 @@ Project Statuses:
 
 ## Web Dev
 
+* [ ] Full Stack Web Dev Apps by JavaScript Mastery (youtube.com)
 * [ ] Learn to Code with JavaScript by Darren Jones
 * [ ] Your First Week With React by Michael Wanyoike et al.
