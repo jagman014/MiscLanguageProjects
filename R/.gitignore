@@ -39,9 +39,5 @@ vignettes/*.pdf
 .Renviron
 renv/
 
-# Project filed
-*.Rproj
-.Rprofile
-
 # Published HTML files from R markdown
 *.nb.html
